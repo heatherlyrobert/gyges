@@ -162,14 +162,14 @@ CURS_current_status     (char a_size, short a_wide, char *a_list)
 /*====================------------------------------------====================*/
 static void  o___SPECIFIC________o () { return; }
 
-char  CURS_status_cell     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ][ copy=%-20.20s ]", my.rpn_list, my.reqs_list, my.deps_list, my.like_list, my.copy_list); }
-char  CURS_status_pros     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, " pros   %s Ï", my.pros_plus); }
-char  CURS_status_reqs     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, " reqs   %s Ï", my.reqs_plus); }
-char  CURS_status_deps     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", my.reqs_list, my.deps_list); }
-char  CURS_status_rpn      (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", my.rpn_list); }
+char  CURS_status_cell     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-20.20s ][ reqs=%-20.20s ][ pros=%-20.20s ][ like=%-20.20s ][ copy=%-20.20s ]", g_curr.h_rpn_list, g_curr.h_reqs_list, g_curr.h_deps_list, g_curr.h_like_list, g_curr.h_copy_list); }
+char  CURS_status_pros     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, " pros   %s Ï", g_curr.h_pros_plus); }
+char  CURS_status_reqs     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, " reqs   %s Ï", g_curr.h_reqs_plus); }
+char  CURS_status_deps     (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ reqs=%-40.40s ][ pros=%-40.40s ]", g_curr.h_reqs_list, g_curr.h_deps_list); }
+char  CURS_status_rpn      (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "[ rpn =%-80.80s ]", g_curr.h_rpn_list); }
 char  CURS_status_tab      (char a_size, short a_wide, char *a_list) { char t [LEN_LABEL]; TAB_name (CTAB, t); snprintf (a_list, LEN_FULL, "[ tab : %c, %s ][ %dc x %dr ]", CTAB, t, NCOL, NROW); }
 char  CURS_status_error    (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "errors (%3d)", nerror); };
-char  CURS_status_detail   (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "%-8.8s %2dt, %3dc, %4dr, t=%c a=%c f=%c d=%c u=%c len=%3d", g_curr.label, g_curr.tab, g_curr.col, g_curr.row, g_curr.type, g_curr.align, g_curr.format, g_curr.decs, g_curr.unit, g_curr.len); }
+char  CURS_status_detail   (char a_size, short a_wide, char *a_list) { snprintf (a_list, LEN_FULL, "%-8.8s %2dt, %3dc, %4dr, t=%c a=%c f=%c d=%c u=%c len=%3d", g_curr.h_label, g_curr.h_tab, g_curr.h_col, g_curr.h_row, g_curr.h_type, g_curr.h_align, g_curr.h_format, g_curr.h_decs, g_curr.h_unit, g_curr.h_len); }
 
 
 char         /*-> tbd --------------------------------[ ------ [gz.220.101.41]*/ /*-[00.0000.014.!]-*/ /*-[--.---.---.--]-*/
@@ -799,10 +799,10 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    /*---(content-based)------------------*/
    else if (a_curr != NULL) {
       /*---(related)---------------------*/
-      if      (strstr (my.like_list, x_label) != NULL)  yVICURSES_by_name ("d_like");
-      else if (strstr (my.copy_list, x_label) != NULL)  yVICURSES_by_name ("d_copy");
-      else if (strstr (my.reqs_list, x_label) != NULL)  yVICURSES_by_name ("d_reqs");
-      else if (strstr (my.deps_list, x_label) != NULL)  yVICURSES_by_name ("d_pros");
+      if      (strstr (g_curr.h_like_list, x_label) != NULL)  yVICURSES_by_name ("d_like");
+      else if (strstr (g_curr.h_copy_list, x_label) != NULL)  yVICURSES_by_name ("d_copy");
+      else if (strstr (g_curr.h_reqs_list, x_label) != NULL)  yVICURSES_by_name ("d_reqs");
+      else if (strstr (g_curr.h_deps_list, x_label) != NULL)  yVICURSES_by_name ("d_pros");
       /*---(trouble)---------------------*/
       else if (a_curr->d_type == YCALC_DATA_ERROR)        yVICURSES_by_name ("!_errs");
       /*---(pointers)--------------------*/
@@ -929,52 +929,7 @@ DRAW_main          (void)
    /*---(update globals)-----------------*/
    DEBUG_GRAF  yLOG_enter   (__FUNCTION__);
    x_curr    = LOC_cell_at_curr ();
-   /*> if (x_curr != x_save) {                                                                  <* 
-    *>    if (x_curr != NULL) {                                                                 <* 
-    *>       yCALC_disp_pros (x_curr->d_ycalc, my.deps_list);                                     <* 
-    *>       yCALC_disp_reqs (x_curr->d_ycalc, my.reqs_list);                                     <* 
-    *>       yCALC_disp_like (x_curr->d_ycalc, my.like_list);                                     <* 
-    *>       yCALC_disp_copy (x_curr->d_ycalc, my.copy_list);                                     <* 
-    *>       yCALC_disp_prosplus (x_curr->d_ycalc, s_pros_plus);                                  <* 
-    *>       yCALC_disp_reqsplus (x_curr->d_ycalc, s_reqs_plus);                                  <* 
-    *>       /+> switch (x_curr->d_type) {                                                  <*    <* 
-    *>        *> case YCALC_DATA_NLIKE:                                                   <*    <* 
-    *>        *> case YCALC_DATA_SLIKE:                                                   <*    <* 
-    *>        *>    ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                              <*    <* 
-    *>        *>    yCALC_disp_reqs (x_curr->d_ycalc, my.like_list);                        <*    <* 
-    *>        *>    break;                                                                <*    <* 
-    *>        *> default :                                                                <*    <* 
-    *>        *>    yCALC_disp_reqs (x_curr->d_ycalc, my.reqs_list);                        <*    <* 
-    *>        *>    ystrlcpy (my.like_list, "n/a", LEN_RECD);                              <*    <* 
-    *>        *>    break;                                                                <*    <* 
-    *>        *> }                                                                        <+/   <* 
-    *>    } else {                                                                              <* 
-    *>       ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                                           <* 
-    *>       ystrlcpy (my.deps_list, "n/a", LEN_RECD);                                           <* 
-    *>       ystrlcpy (my.like_list, "n/a", LEN_RECD);                                           <* 
-    *>       ystrlcpy (my.copy_list, "n/a", LEN_RECD);                                           <* 
-    *>       ystrlcpy (my.rpn_list , "n/a", LEN_RECD);                                           <* 
-    *>       ystrlcpy (s_pros_plus , "n/a", LEN_RECD);                                           <* 
-    *>       ystrlcpy (s_reqs_plus , "n/a", LEN_RECD);                                           <* 
-    *>    }                                                                                     <* 
-    *> }                                                                                        <*/
    x_save = x_curr;
-   /*> if (x_curr != NULL) {                                                          <* 
-    *>    yCALC_disp_pros (x_curr->d_ycalc, my.deps_list);                              <* 
-    *>    yCALC_disp_reqs (x_curr->d_ycalc, my.reqs_list);                              <* 
-    *>    yCALC_disp_like (x_curr->d_ycalc, my.like_list);                              <* 
-    *>    yCALC_disp_copy (x_curr->d_ycalc, my.copy_list);                              <* 
-    *>    yCALC_disp_prosplus (x_curr->d_ycalc, my.pros_plus);                          <* 
-    *>    yCALC_disp_reqsplus (x_curr->d_ycalc, my.reqs_plus);                          <* 
-    *> } else {                                                                       <* 
-    *>    ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                                    <* 
-    *>    ystrlcpy (my.deps_list, "n/a", LEN_RECD);                                    <* 
-    *>    ystrlcpy (my.like_list, "n/a", LEN_RECD);                                    <* 
-    *>    ystrlcpy (my.copy_list, "n/a", LEN_RECD);                                    <* 
-    *>    ystrlcpy (my.rpn_list , "n/a", LEN_RECD);                                    <* 
-    *>    ystrlcpy (my.pros_plus, "n/a", LEN_RECD);                                    <* 
-    *>    ystrlcpy (my.reqs_plus, "n/a", LEN_RECD);                                    <* 
-    *> }                                                                              <*/
    /*> REG_list   (my.reg_curr  , my.reg_list);                                       <*/
    yMARK_mark_list (&(my.mark_show), s_mark_list);
    DEBUG_GRAF  yLOG_info    ("mark_list" , s_mark_list);

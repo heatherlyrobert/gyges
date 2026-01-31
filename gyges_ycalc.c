@@ -563,8 +563,8 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
    x_owner  = (tCELL *) a_owner;
    DEBUG_YCALC   yLOG_value   ("tab"       , x_owner->d_tab);
    DEBUG_YCALC   yLOG_value   ("col"       , x_owner->d_col);
-   DEBUG_YCALC   yLOG_point   ("C_parent"  , x_owner->C_parent);
-   w         = x_owner->C_parent->size;
+   DEBUG_YCALC   yLOG_point   ("d_Cowner"  , x_owner->d_Cowner);
+   w         = x_owner->d_Cowner->n_size;
    DEBUG_YCALC   yLOG_value   ("w"         , w);
    *a_width = w;
    *a_merge = 0;
@@ -589,7 +589,7 @@ api__ycalc_width        (void *a_owner, int *a_width, int *a_merge)
       if (rc < 0 || x_owner == NULL)              break;
       if (x_owner->d_type != YCALC_DATA_MERGED)     break;
       /*> w         = COL_size (x_owner->d_tab, x_owner->d_col);                          <*/
-      w         = x_owner->C_parent->size;
+      w         = x_owner->d_Cowner->n_size;
       DEBUG_YCALC   yLOG_complex ("owner"     , "%-10p, %-5s, %3db, %3dx, %3dy, %3dz, %3dw", x_owner, x_owner->d_label, b, i, y, z, w);
       *a_width += w;
       ++(*a_merge);
@@ -668,9 +668,9 @@ api_ycalc_printer       (void *a_owner)
    }
    x_owner   = (tCELL     *) a_owner;
    /*---(filter unhomed)-----------------*/
-   DEBUG_YCALC   yLOG_complex ("loc"       , "%-10.10p %-7.7s, %2d, %3dc %-10.10p, %4dr %-10.10p", x_owner, x_owner->d_label, x_owner->d_tab, x_owner->d_col, x_owner->C_parent, x_owner->d_row, x_owner->R_parent);
-   --rce;  if (x_owner->C_parent == NULL || x_owner->R_parent == NULL) {
-      DEBUG_YCALC   yLOG_note    ("live, but C_parent || R_parent are null, FUCKED");
+   DEBUG_YCALC   yLOG_complex ("loc"       , "%-10.10p %-7.7s, %2d, %3dc %-10.10p, %4dr %-10.10p", x_owner, x_owner->d_label, x_owner->d_tab, x_owner->d_col, x_owner->d_Cowner, x_owner->d_row, x_owner->d_Rowner);
+   --rce;  if (x_owner->d_Cowner == NULL || x_owner->d_Rowner == NULL) {
+      DEBUG_YCALC   yLOG_note    ("live, but d_Cowner || d_Rowner are null, FUCKED");
       DEBUG_YCALC   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }

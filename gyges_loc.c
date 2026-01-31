@@ -88,7 +88,7 @@ LOC_purge            (void)
    /*---(initialize s_tabs)----------------*/
    rc = TAB_by_cursor (&x_tab, &x_seq, YDLST_HEAD);
    while (x_tab != NULL && rc == 0) {
-      DEBUG_PROG   yLOG_value   ("tab"       , x_tab->tab);
+      DEBUG_PROG   yLOG_value   ("tab"       , x_tab->t_tab);
       rc = TAB_cleanse   (x_tab);
       DEBUG_PROG   yLOG_value   ("cleanse"   , rc);
       rc = TAB_by_cursor (&x_tab, &x_seq, YDLST_NEXT);
@@ -150,7 +150,7 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (x_tab->type == 'f' && (x_tab->ncol < a_col || x_tab->nrow < a_row)) {
+   --rce;  if (x_tab->t_type == 'f' && (x_tab->t_ncol < a_col || x_tab->t_nrow < a_row)) {
       DEBUG_LOCS   yLOG_note    ("fixed tab and can not fit in bounds");
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;

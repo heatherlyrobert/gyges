@@ -77,8 +77,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "4.--, next revision in production"
 #define     P_VERMINOR  "4.0-, clean, simplify, and integrate code"
-#define     P_VERNUM    "4.0b"
-#define     P_VERTXT    "all unit-tests updated to current standard, but not executed yet"
+#define     P_VERNUM    "4.0c"
+#define     P_VERTXT    "all structures (except my) updated to prefix element naming (easier mtce)"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -375,8 +375,6 @@ typedef struct timespec  tTSPEC;
 
 struct cACCESSOR {
    /*---(files)----------------*/
-   char        quiet;          /* bool : 0=normal, 1=quiet                    */
-   int         logger;         /* log file so that we don't close it          */
    char        btree;          /* updates active (y/n)                        */
    /*---(cell root)------------*/
    tCELL      *root;
@@ -464,14 +462,6 @@ struct cACCESSOR {
    char        menu;
    char        ball;                       /* agrios execution tracking       */
    char        cagrios     [LEN_LABEL];    /* current agrios position         */
-   char        reqs_list   [LEN_RECD];     /* cell requires                   */
-   char        deps_list   [LEN_RECD];     /* cell depends                    */
-   char        like_list   [LEN_RECD];     /* cell likes                      */
-   char        copy_list   [LEN_RECD];     /* cell likes                      */
-   char        rpn_list    [LEN_RECD];     /* cell rpn contents               */
-   char        reg_list    [LEN_RECD];     /* register contents               */
-   char        pros_plus   [LEN_RECD];
-   char        reqs_plus   [LEN_RECD];
    char        keys        [LEN_RECD];     /* current keystrokes              */
    /*---(done)------------*/
 };
@@ -640,12 +630,12 @@ struct cCELL {  /*  prefix "d_" stands for data */
    tCELL      *b_left;       /* btree left branch                             */
    tCELL      *b_right;      /* btree right branch                            */
    /*---(ties to sheet)------------------*/
-   tNODE      *C_parent;     /* parent column                                 */
-   tCELL      *c_prev;       /* prev in specific column                       */
-   tCELL      *c_next;       /* next in specific column                       */
-   tNODE      *R_parent;     /* parent row                                    */
-   tCELL      *r_prev;       /* prev in specific row                          */
-   tCELL      *r_next;       /* next in specific row                          */
+   tNODE      *d_Cowner;     /* parent column                                 */
+   tCELL      *d_Cprev;      /* prev in specific column                       */
+   tCELL      *d_Cnext;      /* next in specific column                       */
+   tNODE      *d_Rowner;     /* parent row                                    */
+   tCELL      *d_Rprev;      /* prev in specific row                          */
+   tCELL      *d_Rnext;      /* next in specific row                          */
    /*---(end)----------------------------*/
 };
 extern tCELL      *hcell;           /* head pointer for cell data structure          */
@@ -712,15 +702,19 @@ extern int         acell;           /* count of all cells                       
  *
  */
 struct cNODE {
-   uchar       type;            /* 'c' column vs 'r' row                      */
-   uchar       tab;             /* number of tab                              */
-   ushort      ref;             /* sequential identifier                      */
-   uchar       size;            /* size                                       */
-   tNODE      *N_prev;          /* prev col/row on tab                        */
-   tNODE      *N_next;          /* next col/row on tab                        */
-   ushort      count;           /* count of cells in col/row                  */
-   tCELL      *n_head;          /* first used/real cell in col/row            */
-   tCELL      *n_tail;          /* last/bottom used/real cell in col/row      */
+   /*---(master)------------*/
+   uchar       n_type;          /* 'c' column vs 'r' row                      */
+   uchar       n_tab;           /* number of tab                              */
+   ushort      n_ref;           /* sequential identifier                      */
+   uchar       n_size;          /* size                                       */
+   /*---(node list)---------*/
+   tNODE      *n_prev;          /* prev col/row on tab                        */
+   tNODE      *n_next;          /* next col/row on tab                        */
+   /*---(contained cells)---*/
+   ushort      n_dcount;        /* count of cells in col/row                  */
+   tCELL      *n_dhead;         /* first used/real cell in col/row            */
+   tCELL      *n_dtail;         /* last/bottom used/real cell in col/row      */
+   /*---(done)--------------*/
 };
 
 
@@ -758,34 +752,34 @@ struct cTAB {
    /*---(header)-------------------------*/
    /* tabs are pre-allocated and can put into and taken out of use simply by  */
    /* starting to use them.                                                   */
-   uchar       tab;                         /* number of tab                  */
-   uchar       abbr;                        /* abbreviation of tab            */
-   uchar      *name;                        /* tab name for user reference    */
-   uchar       type;                        /* tab type                       */
+   uchar       t_tab;                         /* number of tab                  */
+   uchar       t_abbr;                        /* abbreviation of tab            */
+   uchar      *t_name;                        /* tab name for user reference    */
+   uchar       t_type;                        /* tab type                       */
    /*---(columns)------------------------*/
-   tNODE      *C_head;
-   tNODE      *C_tail;
-   ushort      C_count;
-   ushort      ncol;                        /* current limit on cols          */
-   ushort      ccol;                        /* current column                 */
-   ushort      bcol;                        /* beginning column               */
-   ushort      ecol;                        /* ending column                  */
-   uchar       froz_col;                    /* are the cols frozen            */
-   ushort      froz_bcol;                   /* left of frozen cols            */
-   ushort      froz_ecol;                   /* right of frozen cols           */
+   tNODE      *t_Chead;
+   tNODE      *t_Ctail;
+   ushort      t_Ccount;
+   ushort      t_ncol;                        /* current limit on cols          */
+   ushort      t_ccol;                        /* current column                 */
+   ushort      t_bcol;                        /* beginning column               */
+   ushort      t_ecol;                        /* ending column                  */
+   uchar       t_froz_col;                    /* are the cols frozen            */
+   ushort      t_froz_bcol;                   /* left of frozen cols            */
+   ushort      t_froz_ecol;                   /* right of frozen cols           */
    /*---(rows)---------------------------*/
-   tNODE      *R_head;
-   tNODE      *R_tail;
-   ushort      R_count;
-   ushort      nrow;                        /* current limit on rows          */
-   ushort      crow;                        /* current row                    */
-   ushort      brow;                        /* beginning row                  */
-   ushort      erow;                        /* ending row                     */
-   uchar       froz_row;                    /* are the rows frozen            */
-   ushort      froz_brow;                   /* top of frozen rows             */
-   ushort      froz_erow;                   /* bottom of frozen rows          */
+   tNODE      *t_Rhead;
+   tNODE      *t_Rtail;
+   ushort      t_Rcount;
+   ushort      t_nrow;                        /* current limit on rows          */
+   ushort      t_crow;                        /* current row                    */
+   ushort      t_brow;                        /* beginning row                  */
+   ushort      t_erow;                        /* ending row                     */
+   uchar       t_froz_row;                    /* are the rows frozen            */
+   ushort      t_froz_brow;                   /* top of frozen rows             */
+   ushort      t_froz_erow;                   /* bottom of frozen rows          */
    /*---(overall)------------------------*/
-   uint        count;                       /* count of entries in sheet      */
+   uint        t_count;                       /* count of entries in sheet      */
    /*---(end)----------------------------*/
 };
 extern tTAB    *p_tab;                        /* current tab pointer                 */
@@ -927,16 +921,32 @@ extern      char     *g_rcops;
 
 typedef struct cCURR tCURR;
 struct cCURR {
-   uchar       type;
-   uchar       label      [LEN_LABEL];
-   char        tab;
-   short       col;
-   short       row;
-   short       len;
-   uchar       align;
-   uchar       format;
-   uchar       decs;
-   uchar       unit;
+   /*---(master)------------*/
+   uchar       h_type;
+   uchar       h_label      [LEN_LABEL];
+   /*---(location)----------*/
+   char        h_tab;
+   short       h_col;
+   short       h_row;
+   short       h_len;
+   /*---(simple)------------*/
+   uchar       h_align;
+   uchar       h_format;
+   uchar       h_decs;
+   uchar       h_unit;
+   uchar       h_fill;
+   uchar       h_zero;
+   uchar       h_note;
+   uchar       h_srch;
+   /*---(complex)-----------*/
+   char        h_reqs_list   [LEN_RECD];     /* cell requires                   */
+   char        h_deps_list   [LEN_RECD];     /* cell depends                    */
+   char        h_like_list   [LEN_RECD];     /* cell likes                      */
+   char        h_copy_list   [LEN_RECD];     /* cell likes                      */
+   char        h_rpn_list    [LEN_RECD];     /* cell rpn contents               */
+   char        h_reg_list    [LEN_RECD];     /* register contents               */
+   char        h_pros_plus   [LEN_RECD];
+   char        h_reqs_plus   [LEN_RECD];
 };
 extern  tCURR g_curr;
 

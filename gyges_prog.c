@@ -164,7 +164,7 @@ PROG_urgents            (int a_argc, char *a_argv [])
    }
    /*---(process urgents)----------------*/
    rc = yURG_urgs    (a_argc, a_argv);
-   DEBUG_PROG   yLOG_value    ("logger"    , rc);
+   DEBUG_PROG   yLOG_value    ("urgs"      , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG   yLOG_exitr    (__FUNCTION__, rce);
       return rce;

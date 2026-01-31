@@ -265,12 +265,12 @@ CELL__new_driver   (char a_root, tCELL **a_cell, char a_linked)
    x_new->d_ycalc     = NULL;
    DEBUG_CELL   yLOG_note    ("successful");
    /*---(row/col)------------------------*/
-   x_new->C_parent  = NULL;
-   x_new->c_prev    = NULL;
-   x_new->c_next    = NULL;
-   x_new->R_parent  = NULL;
-   x_new->r_prev    = NULL;
-   x_new->r_next    = NULL;
+   x_new->d_Cowner  = NULL;
+   x_new->d_Cprev    = NULL;
+   x_new->d_Cnext    = NULL;
+   x_new->d_Rowner  = NULL;
+   x_new->d_Rprev    = NULL;
+   x_new->d_Rnext    = NULL;
    /*---(sort)---------------------------*/
    /*> rc = api_ysort_update ();                                                      <*/
    /*> DEBUG_CELL   yLOG_value   ("ysort"     , rc);                                  <*/
@@ -1537,7 +1537,7 @@ CELL_print_line         (tCELL *a_cell, char *a_line)
       return 0;
    }
    /*---(prepare full)----------------*/
-   if (a_cell->C_parent != NULL)  sprintf  (s, "%1dh %2dw", a_cell->R_parent->size, a_cell->C_parent->size);
+   if (a_cell->d_Cowner != NULL)  sprintf  (s, "%1dh %2dw", a_cell->d_Rowner->n_size, a_cell->d_Cowner->n_size);
    else                           ystrlcpy  (s, "-h  -w", LEN_LABEL);
    if (a_cell->d_print    != NULL)  sprintf  (t, "%3då%.38sæ", strlen (a_cell->d_print), a_cell->d_print);
    else                           ystrlcpy  (t, " --åæ", LEN_HUND);
@@ -1576,24 +1576,24 @@ CELL_linkage_line       (tCELL *a_cell, char *a_line)
    else                             sprintf  (s, " mn:%-6.6s", a_cell->d_next->d_label);
    ystrlcat (t, s, LEN_HUND);
    /*---(column)----------------------*/
-   if (a_cell->C_parent == NULL)    ystrlcpy  (s, "   -c", LEN_LABEL);
-   else                             sprintf  (s, " %3dc", a_cell->C_parent->ref);
+   if (a_cell->d_Cowner == NULL)    ystrlcpy  (s, "   -c", LEN_LABEL);
+   else                             sprintf  (s, " %3dc", a_cell->d_Cowner->n_ref);
    ystrlcat (t, s, LEN_HUND);
-   if (a_cell->c_prev   == NULL)    ystrlcpy  (s, " cp:-     ", LEN_LABEL);
-   else                             sprintf  (s, " cp:%-6.6s", a_cell->c_prev->d_label);
+   if (a_cell->d_Cprev   == NULL)    ystrlcpy  (s, " cp:-     ", LEN_LABEL);
+   else                             sprintf  (s, " cp:%-6.6s", a_cell->d_Cprev->d_label);
    ystrlcat (t, s, LEN_HUND);
-   if (a_cell->c_next   == NULL)    ystrlcpy  (s, " cn:-     ", LEN_LABEL);
-   else                             sprintf  (s, " cn:%-6.6s", a_cell->c_next->d_label);
+   if (a_cell->d_Cnext   == NULL)    ystrlcpy  (s, " cn:-     ", LEN_LABEL);
+   else                             sprintf  (s, " cn:%-6.6s", a_cell->d_Cnext->d_label);
    ystrlcat (t, s, LEN_HUND);
    /*---(row)-------------------------*/
-   if (a_cell->R_parent == NULL)    ystrlcpy  (s, "    -r", LEN_LABEL);
-   else                             sprintf  (s, " %4dr", a_cell->R_parent->ref);
+   if (a_cell->d_Rowner == NULL)    ystrlcpy  (s, "    -r", LEN_LABEL);
+   else                             sprintf  (s, " %4dr", a_cell->d_Rowner->n_ref);
    ystrlcat (t, s, LEN_HUND);
-   if (a_cell->r_prev   == NULL)    ystrlcpy  (s, " rp:-     ", LEN_LABEL);
-   else                             sprintf  (s, " rp:%-6.6s", a_cell->r_prev->d_label);
+   if (a_cell->d_Rprev   == NULL)    ystrlcpy  (s, " rp:-     ", LEN_LABEL);
+   else                             sprintf  (s, " rp:%-6.6s", a_cell->d_Rprev->d_label);
    ystrlcat (t, s, LEN_HUND);
-   if (a_cell->r_next   == NULL)    ystrlcpy  (s, " rn:-"     , LEN_LABEL);
-   else                             sprintf  (s, " rn:%s"    , a_cell->r_next->d_label);
+   if (a_cell->d_Rnext   == NULL)    ystrlcpy  (s, " rn:-"     , LEN_LABEL);
+   else                             sprintf  (s, " rn:%s"    , a_cell->d_Rnext->d_label);
    ystrlcat (t, s, LEN_HUND);
    /*---(concat)----------------------*/
    snprintf (a_line, LEN_FULL, "%c %-8.8s%s", a_cell->d_linked, a_cell->d_label, t);

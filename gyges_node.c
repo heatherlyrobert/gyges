@@ -45,9 +45,9 @@ static tNODE *s_curr   = NULL;
 
 #define   IF_MATCH   if ((a_type == 'c' && x_curr->d_row == a_seq) || (a_type == 'r' && x_curr->d_col == a_seq)) 
 #define   IF_PAST    if ((a_type == 'c' && x_curr->d_row >  a_seq) || (a_type == 'r' && x_curr->d_col >  a_seq)) 
-#define   IF_EMPTY   if (x_node->n_head == NULL && ((a_type == 'c' && x_node->size == DEF_WIDTH) || (a_type == 'r' && x_node->size == DEF_HEIGHT)))
+#define   IF_EMPTY   if (x_node->n_dhead == NULL && ((a_type == 'c' && x_node->n_size == DEF_WIDTH) || (a_type == 'r' && x_node->n_size == DEF_HEIGHT)))
 
-#define   IF_DEFAULT if ((a_type == 'c' && x_node->size == DEF_WIDTH) || (a_type == 'r' && x_node->size == DEF_HEIGHT))
+#define   IF_DEFAULT if ((a_type == 'c' && x_node->n_size == DEF_WIDTH) || (a_type == 'r' && x_node->n_size == DEF_HEIGHT))
 
 
 
@@ -96,51 +96,51 @@ NODE_new                (tNODE **a_new, tTAB *a_tab, char a_type, ushort a_ref)
    }
    /*---(populate)-----------------------*/
    DEBUG_LOCS   yLOG_snote   ("populate");
-   x_new->type      = a_type;
-   x_new->tab       = a_tab->tab;
-   x_new->ref       = a_ref;
-   IF_COL    x_new->size      = DEF_WIDTH;
-   ELSE_ROW  x_new->size      = DEF_HEIGHT;
-   x_new->count     = 0;
-   x_new->N_prev    = NULL;
-   x_new->N_next    = NULL;
-   x_new->n_head    = NULL;
-   x_new->n_tail    = NULL;
+   x_new->n_type    = a_type;
+   x_new->n_tab     = a_tab->t_tab;
+   x_new->n_ref     = a_ref;
+   IF_COL    x_new->n_size      = DEF_WIDTH;
+   ELSE_ROW  x_new->n_size      = DEF_HEIGHT;
+   x_new->n_prev    = NULL;
+   x_new->n_next    = NULL;
+   x_new->n_dcount  = 0;
+   x_new->n_dhead   = NULL;
+   x_new->n_dtail   = NULL;
    /*---(find position)------------------*/
-   IF_COL    x_curr = a_tab->C_head;
-   ELSE_ROW  x_curr = a_tab->R_head;
+   IF_COL    x_curr = a_tab->t_Chead;
+   ELSE_ROW  x_curr = a_tab->t_Rhead;
    --rce;  while (x_curr != NULL) {
-      if (x_curr->ref >  x_new->ref)   break;
+      if (x_curr->n_ref >  x_new->n_ref)   break;
       x_prev = x_curr;
-      x_curr = x_curr->N_next;
+      x_curr = x_curr->n_next;
    }
    DEBUG_LOCS   yLOG_spoint  (x_prev);
    DEBUG_LOCS   yLOG_spoint  (x_curr);
    /*---(add to tab)---------------------*/
    if (x_prev == NULL && x_curr == NULL) {
       DEBUG_LOCS   yLOG_snote   ("first col/row");
-      IF_COL    { a_tab->C_head  = x_new;  a_tab->C_tail  = x_new; }
-      ELSE_ROW  { a_tab->R_head  = x_new;  a_tab->R_tail  = x_new; }
+      IF_COL    { a_tab->t_Chead  = x_new;  a_tab->t_Ctail  = x_new; }
+      ELSE_ROW  { a_tab->t_Rhead  = x_new;  a_tab->t_Rtail  = x_new; }
    } else if (x_prev == NULL && x_curr != NULL) {
       DEBUG_LOCS   yLOG_snote   ("prepend to front");
-      IF_COL    { x_new->N_next = a_tab->C_head; a_tab->C_head->N_prev = x_new; a_tab->C_head = x_new; }
-      ELSE_ROW  { x_new->N_next = a_tab->R_head; a_tab->R_head->N_prev = x_new; a_tab->R_head = x_new; }
+      IF_COL    { x_new->n_next = a_tab->t_Chead; a_tab->t_Chead->n_prev = x_new; a_tab->t_Chead = x_new; }
+      ELSE_ROW  { x_new->n_next = a_tab->t_Rhead; a_tab->t_Rhead->n_prev = x_new; a_tab->t_Rhead = x_new; }
    } else if (x_prev != NULL && x_curr == NULL) {
       DEBUG_LOCS   yLOG_snote   ("append to back");
-      IF_COL    { x_new->N_prev = a_tab->C_tail; a_tab->C_tail->N_next = x_new; a_tab->C_tail = x_new; }
-      ELSE_ROW  { x_new->N_prev = a_tab->R_tail; a_tab->R_tail->N_next = x_new; a_tab->R_tail = x_new; }
+      IF_COL    { x_new->n_prev = a_tab->t_Ctail; a_tab->t_Ctail->n_next = x_new; a_tab->t_Ctail = x_new; }
+      ELSE_ROW  { x_new->n_prev = a_tab->t_Rtail; a_tab->t_Rtail->n_next = x_new; a_tab->t_Rtail = x_new; }
    } else {
       DEBUG_LOCS   yLOG_snote   ("insert in middle");
-      x_new->N_next  = x_prev->N_next;
-      x_prev->N_next = x_new;
-      x_new->N_prev  = x_curr->N_prev;
-      x_curr->N_prev = x_new;
+      x_new->n_next  = x_prev->n_next;
+      x_prev->n_next = x_new;
+      x_new->n_prev  = x_curr->n_prev;
+      x_curr->n_prev = x_new;
    }
    /*---(update counts)------------------*/
-   IF_COL   ++(a_tab->C_count);
-   ELSE_ROW ++(a_tab->R_count);
-   DEBUG_LOCS   yLOG_sint    (a_tab->C_count);
-   DEBUG_LOCS   yLOG_sint    (a_tab->R_count);
+   IF_COL   ++(a_tab->t_Ccount);
+   ELSE_ROW ++(a_tab->t_Rcount);
+   DEBUG_LOCS   yLOG_sint    (a_tab->t_Ccount);
+   DEBUG_LOCS   yLOG_sint    (a_tab->t_Rcount);
    /*---(return)-------------------------*/
    if (a_new != NULL)  *a_new = x_new;
    /*---(complete)-----------------------*/
@@ -170,37 +170,37 @@ NODE_free               (tNODE **a_old)
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   a_type = x_old->type;
+   a_type = x_old->n_type;
    DEBUG_LOCS   yLOG_schar   (a_type);
-   TAB_pointer (&x_tab, x_old->tab);
+   TAB_pointer (&x_tab, x_old->n_tab);
    DEBUG_LOCS   yLOG_spoint  (x_tab);
    --rce;  if (x_tab == NULL) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(check col/row is empty)----------*/
-   DEBUG_LOCS   yLOG_spoint  (x_old->n_head);
-   --rce;  if (x_old->n_head != NULL) {
+   DEBUG_LOCS   yLOG_spoint  (x_old->n_dhead);
+   --rce;  if (x_old->n_dhead != NULL) {
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(remove from list)---------------*/
    DEBUG_GRAF   yLOG_snote   ("remove");
-   if (x_old->N_prev != NULL)  x_old->N_prev->N_next = x_old->N_next;
+   if (x_old->n_prev != NULL)  x_old->n_prev->n_next = x_old->n_next;
    else {
-      IF_COL                   x_tab->C_head         = x_old->N_next;
-      ELSE_ROW                 x_tab->R_head         = x_old->N_next;
+      IF_COL                   x_tab->t_Chead         = x_old->n_next;
+      ELSE_ROW                 x_tab->t_Rhead         = x_old->n_next;
    }
-   if (x_old->N_next != NULL)  x_old->N_next->N_prev = x_old->N_prev;
+   if (x_old->n_next != NULL)  x_old->n_next->n_prev = x_old->n_prev;
    else {
-      IF_COL                   x_tab->C_tail         = x_old->N_prev;
-      ELSE_ROW                 x_tab->R_tail         = x_old->N_prev;
+      IF_COL                   x_tab->t_Ctail         = x_old->n_prev;
+      ELSE_ROW                 x_tab->t_Rtail         = x_old->n_prev;
    }
    /*---(update counters)----------------*/
-   IF_COL   --(x_tab->C_count);
-   ELSE_ROW --(x_tab->R_count);
-   DEBUG_LOCS   yLOG_sint    (x_tab->C_count);
-   DEBUG_LOCS   yLOG_sint    (x_tab->R_count);
+   IF_COL   --(x_tab->t_Ccount);
+   ELSE_ROW --(x_tab->t_Rcount);
+   DEBUG_LOCS   yLOG_sint    (x_tab->t_Ccount);
+   DEBUG_LOCS   yLOG_sint    (x_tab->t_Rcount);
    /*---(free)---------------------------*/
    free (x_old);
    *a_old = NULL;
@@ -252,12 +252,12 @@ NODE_by_cursor          (tNODE **a_found, tTAB *a_tab, char a_type, char a_move)
       return rce;
    }
    /*---(handle move)--------------------*/
-   IF_COL    { x_head = a_tab->C_head; x_tail = a_tab->C_tail; }
-   ELSE_ROW  { x_head = a_tab->R_head; x_tail = a_tab->R_tail; }
+   IF_COL    { x_head = a_tab->t_Chead; x_tail = a_tab->t_Ctail; }
+   ELSE_ROW  { x_head = a_tab->t_Rhead; x_tail = a_tab->t_Rtail; }
    switch (a_move) {
    case '[' : s_curr  = x_head;             break;
-   case '<' : s_curr  = s_curr->N_prev;     break;
-   case '>' : s_curr  = s_curr->N_next;     break;
+   case '<' : s_curr  = s_curr->n_prev;     break;
+   case '>' : s_curr  = s_curr->n_next;     break;
    case ']' : s_curr  = x_tail;             break;
    }
    DEBUG_LOCS   yLOG_spoint  (s_tab);
@@ -295,8 +295,8 @@ NODE_by_index           (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref
       return rce;
    }
    s_tab = a_tab;
-   IF_COL    x_head = a_tab->C_head;
-   ELSE_ROW  x_head = a_tab->R_head;
+   IF_COL    x_head = a_tab->t_Chead;
+   ELSE_ROW  x_head = a_tab->t_Rhead;
    DEBUG_LOCS   yLOG_spoint  (x_head);
    --rce;  if (x_head == NULL) {
       s_curr = NULL;
@@ -306,13 +306,13 @@ NODE_by_index           (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref
    /*---(walk)---------------------------*/
    s_curr = x_head;
    --rce;  while (s_curr != NULL) {
-      if (s_curr->ref >= a_ref)  break;
-      s_curr = s_curr->N_next;
+      if (s_curr->n_ref >= a_ref)  break;
+      s_curr = s_curr->n_next;
    }
    DEBUG_LOCS   yLOG_spoint  (s_tab);
    DEBUG_LOCS   yLOG_spoint  (s_curr);
    /*---(check failure)------------------*/
-   --rce;  if (s_curr == NULL ||  s_curr->ref != a_ref) {
+   --rce;  if (s_curr == NULL ||  s_curr->n_ref != a_ref) {
       s_curr = NULL;
       DEBUG_LOCS   yLOG_snote   ("failed");
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
@@ -363,8 +363,8 @@ NODE_ensure             (tNODE **a_found, tTAB *a_tab, char a_type, ushort a_ref
          return rce;
       }
    } else rc = 1;
-   DEBUG_LOCS   yLOG_value   ("ref"       , x_found->ref);
-   DEBUG_LOCS   yLOG_value   ("count"     , x_found->count);
+   DEBUG_LOCS   yLOG_value   ("ref"       , x_found->n_ref);
+   DEBUG_LOCS   yLOG_value   ("count"     , x_found->n_dcount);
    /*---(return)-------------------------*/
    if (a_found != NULL)  *a_found = x_found;
    /*---(complete)-----------------------*/
@@ -395,24 +395,24 @@ NODE_cleanse            (tTAB *a_tab, char a_type)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_LOCS   yLOG_value   ("cells"     , a_tab->count);
-   IF_COL   x_remain = a_tab->C_count;
-   ELSE_ROW x_remain = a_tab->R_count;
+   DEBUG_LOCS   yLOG_value   ("cells"     , a_tab->t_count);
+   IF_COL   x_remain = a_tab->t_Ccount;
+   ELSE_ROW x_remain = a_tab->t_Rcount;
    DEBUG_LOCS   yLOG_value   ("before"    , x_remain);
    /*---(remove all rows)----------------*/
-   IF_COL   x_node = a_tab->C_head;
-   ELSE_ROW x_node = a_tab->R_head;
+   IF_COL   x_node = a_tab->t_Chead;
+   ELSE_ROW x_node = a_tab->t_Rhead;
    while (x_node != NULL) {
-      x_next = x_node->N_next;
-      if (x_node->count <= 0) {
-         IF_COL   x_node->size = DEF_WIDTH;
-         ELSE_ROW x_node->size = DEF_HEIGHT;
+      x_next = x_node->n_next;
+      if (x_node->n_dcount <= 0) {
+         IF_COL   x_node->n_size = DEF_WIDTH;
+         ELSE_ROW x_node->n_size = DEF_HEIGHT;
          NODE_free (&x_node);
       }
       x_node = x_next;
    }
-   IF_COL   x_remain = a_tab->C_count;
-   ELSE_ROW x_remain = a_tab->R_count;
+   IF_COL   x_remain = a_tab->t_Ccount;
+   ELSE_ROW x_remain = a_tab->t_Rcount;
    DEBUG_LOCS   yLOG_value   ("after"     , x_remain);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
@@ -466,7 +466,7 @@ NODE_hook_cell          (tTAB *a_tab, char a_type, ushort a_ref, ushort a_seq, t
       return rce;
    }
    /*---(find cell position)-------------*/
-   x_curr = x_node->n_head;
+   x_curr = x_node->n_dhead;
    --rce;  while (x_curr != NULL) {
       IF_MATCH {
          DEBUG_LOCS   yLOG_note    ("already exists");
@@ -475,41 +475,41 @@ NODE_hook_cell          (tTAB *a_tab, char a_type, ushort a_ref, ushort a_seq, t
       }
       IF_PAST break;
       x_prev = x_curr;
-      IF_COL   x_curr = x_curr->c_next;
-      ELSE_ROW x_curr = x_curr->r_next;
+      IF_COL   x_curr = x_curr->d_Cnext;
+      ELSE_ROW x_curr = x_curr->d_Rnext;
    }
    DEBUG_LOCS   yLOG_point   ("x_prev"    , x_prev);
    DEBUG_LOCS   yLOG_point   ("x_curr"    , x_curr);
    /*---(add cell to col)----------------*/
    if (x_prev == NULL && x_curr == NULL) {
       DEBUG_LOCS   yLOG_note    ("first cell in col/row");
-      IF_COL    { a_cell->c_prev = NULL; }
-      ELSE_ROW  { a_cell->r_prev = NULL; }
-      x_node->n_head         = a_cell;
-      x_node->n_tail         = a_cell;
+      IF_COL    { a_cell->d_Cprev = NULL; }
+      ELSE_ROW  { a_cell->d_Rprev = NULL; }
+      x_node->n_dhead         = a_cell;
+      x_node->n_dtail         = a_cell;
    } else if (x_prev == NULL && x_curr != NULL) {
       DEBUG_LOCS   yLOG_note    ("prepend to front");
-      IF_COL    { a_cell->c_prev = NULL; a_cell->c_next = x_node->n_head; x_node->n_head->c_prev = a_cell; }
-      ELSE_ROW  { a_cell->r_prev = NULL; a_cell->r_next = x_node->n_head; x_node->n_head->r_prev = a_cell; }
-      x_node->n_head         = a_cell;
+      IF_COL    { a_cell->d_Cprev = NULL; a_cell->d_Cnext = x_node->n_dhead; x_node->n_dhead->d_Cprev = a_cell; }
+      ELSE_ROW  { a_cell->d_Rprev = NULL; a_cell->d_Rnext = x_node->n_dhead; x_node->n_dhead->d_Rprev = a_cell; }
+      x_node->n_dhead         = a_cell;
    } else if (x_prev != NULL && x_curr == NULL) {
       DEBUG_LOCS   yLOG_note    ("append to back");
-      IF_COL    { a_cell->c_next = NULL; a_cell->c_prev = x_node->n_tail; x_node->n_tail->c_next = a_cell; }
-      ELSE_ROW  { a_cell->r_next = NULL; a_cell->r_prev = x_node->n_tail; x_node->n_tail->r_next = a_cell; }
-      x_node->n_tail         = a_cell;
+      IF_COL    { a_cell->d_Cnext = NULL; a_cell->d_Cprev = x_node->n_dtail; x_node->n_dtail->d_Cnext = a_cell; }
+      ELSE_ROW  { a_cell->d_Rnext = NULL; a_cell->d_Rprev = x_node->n_dtail; x_node->n_dtail->d_Rnext = a_cell; }
+      x_node->n_dtail         = a_cell;
    } else {
       DEBUG_LOCS   yLOG_note    ("insert in middle");
-      IF_COL    { a_cell->c_next = x_prev->c_next; x_prev->c_next = a_cell; a_cell->c_prev = x_curr->c_prev; x_curr->c_prev = a_cell; }
-      ELSE_ROW  { a_cell->r_next = x_prev->r_next; x_prev->r_next = a_cell; a_cell->r_prev = x_curr->r_prev; x_curr->r_prev = a_cell; }
+      IF_COL    { a_cell->d_Cnext = x_prev->d_Cnext; x_prev->d_Cnext = a_cell; a_cell->d_Cprev = x_curr->d_Cprev; x_curr->d_Cprev = a_cell; }
+      ELSE_ROW  { a_cell->d_Rnext = x_prev->d_Rnext; x_prev->d_Rnext = a_cell; a_cell->d_Rprev = x_curr->d_Rprev; x_curr->d_Rprev = a_cell; }
    }
    /*---(update col ties)----------------*/
-   ++(x_node->count);
+   ++(x_node->n_dcount);
    IF_COL   a_cell->d_col    = a_ref;
    ELSE_ROW a_cell->d_row    = a_ref;
-   IF_COL   a_cell->C_parent = x_node;
-   ELSE_ROW a_cell->R_parent = x_node;
-   IF_COL   { DEBUG_LOCS   yLOG_complex ("C_parent"  , "%-10.10p, %c, %3dr, %3dc", a_cell->C_parent, a_cell->C_parent->type, a_cell->C_parent->ref, a_cell->C_parent->count); }
-   ELSE_ROW { DEBUG_LOCS   yLOG_complex ("R_parent"  , "%-10.10p, %c, %3dr, %3dc", a_cell->R_parent, a_cell->R_parent->type, a_cell->R_parent->ref, a_cell->R_parent->count); }
+   IF_COL   a_cell->d_Cowner = x_node;
+   ELSE_ROW a_cell->d_Rowner = x_node;
+   IF_COL   { DEBUG_LOCS   yLOG_complex ("d_Cowner"  , "%-10.10p, %c, %3dr, %3dc", a_cell->d_Cowner, a_cell->d_Cowner->n_type, a_cell->d_Cowner->n_ref, a_cell->d_Cowner->n_dcount); }
+   ELSE_ROW { DEBUG_LOCS   yLOG_complex ("d_Rowner"  , "%-10.10p, %c, %3dr, %3dc", a_cell->d_Rowner, a_cell->d_Rowner->n_type, a_cell->d_Rowner->n_ref, a_cell->d_Rowner->n_dcount); }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -531,8 +531,8 @@ NODE_unhook_cell        (char a_type, tCELL *a_cell)
       return rce;
    }
    /*---(find col/row)-------------------*/
-   IF_COL   x_node = a_cell->C_parent;
-   ELSE_ROW x_node = a_cell->R_parent;
+   IF_COL   x_node = a_cell->d_Cowner;
+   ELSE_ROW x_node = a_cell->d_Rowner;
    DEBUG_LOCS   yLOG_point   ("x_node"    , x_node);
    --rce;  if (x_node == NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
@@ -541,33 +541,33 @@ NODE_unhook_cell        (char a_type, tCELL *a_cell)
    /*---(remove from list)---------------*/
    DEBUG_GRAF   yLOG_note    ("remove from col/row");
    IF_COL {
-      if (a_cell->c_prev != NULL)  a_cell->c_prev->c_next = a_cell->c_next;
-      else                         x_node->n_head         = a_cell->c_next;
-      if (a_cell->c_next != NULL)  a_cell->c_next->c_prev = a_cell->c_prev;
-      else                         x_node->n_tail         = a_cell->c_prev;
-      a_cell->c_prev = NULL;
-      a_cell->c_next = NULL;
+      if (a_cell->d_Cprev != NULL)  a_cell->d_Cprev->d_Cnext = a_cell->d_Cnext;
+      else                         x_node->n_dhead         = a_cell->d_Cnext;
+      if (a_cell->d_Cnext != NULL)  a_cell->d_Cnext->d_Cprev = a_cell->d_Cprev;
+      else                         x_node->n_dtail         = a_cell->d_Cprev;
+      a_cell->d_Cprev = NULL;
+      a_cell->d_Cnext = NULL;
    }
    ELSE_ROW {
-      if (a_cell->r_prev != NULL)  a_cell->r_prev->r_next = a_cell->r_next;
-      else                         x_node->n_head         = a_cell->r_next;
-      if (a_cell->r_next != NULL)  a_cell->r_next->r_prev = a_cell->r_prev;
-      else                         x_node->n_tail         = a_cell->r_prev;
-      a_cell->r_prev = NULL;
-      a_cell->r_next = NULL;
+      if (a_cell->d_Rprev != NULL)  a_cell->d_Rprev->d_Rnext = a_cell->d_Rnext;
+      else                         x_node->n_dhead         = a_cell->d_Rnext;
+      if (a_cell->d_Rnext != NULL)  a_cell->d_Rnext->d_Rprev = a_cell->d_Rprev;
+      else                         x_node->n_dtail         = a_cell->d_Rprev;
+      a_cell->d_Rprev = NULL;
+      a_cell->d_Rnext = NULL;
    }
    /*---(update counters)----------------*/
-   --(x_node->count);
-   DEBUG_LOCS   yLOG_sint    (x_node->count);
+   --(x_node->n_dcount);
+   DEBUG_LOCS   yLOG_sint    (x_node->n_dcount);
    /*---(update col ties)----------------*/
    IF_COL   a_cell->d_col    = UNHOOKED;
    ELSE_ROW a_cell->d_row    = UNHOOKED;
-   IF_COL   a_cell->C_parent = NULL;
-   ELSE_ROW a_cell->R_parent = NULL;
+   IF_COL   a_cell->d_Cowner = NULL;
+   ELSE_ROW a_cell->d_Rowner = NULL;
    /*---(check for freeing)--------------*/
-   DEBUG_LOCS   yLOG_point   ("n_head"    , x_node->n_head);
-   DEBUG_LOCS   yLOG_value   ("count"     , x_node->count);
-   DEBUG_LOCS   yLOG_value   ("size"      , x_node->size);
+   DEBUG_LOCS   yLOG_point   ("n_dhead"    , x_node->n_dhead);
+   DEBUG_LOCS   yLOG_value   ("count"     , x_node->n_dcount);
+   DEBUG_LOCS   yLOG_value   ("size"      , x_node->n_size);
    DEBUG_LOCS   yLOG_value   ("def_width" , DEF_WIDTH);
    DEBUG_LOCS   yLOG_value   ("def_height", DEF_HEIGHT);
    --rce;  IF_EMPTY {
@@ -618,10 +618,10 @@ NODE_used                (char a_index, char a_type, short a_ref)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_LOCS   yLOG_value   ("count"     , x_found->count);
+   DEBUG_LOCS   yLOG_value   ("count"     , x_found->n_dcount);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return x_found->count;
+   return x_found->n_dcount;
 }
 
 short        /*-> find smallest used col/row in tab --[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
@@ -652,10 +652,10 @@ NODE_min_used        (char a_index, char a_type)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_LOCS   yLOG_value   ("min used"  , x_found->ref);
+   DEBUG_LOCS   yLOG_value   ("min used"  , x_found->n_ref);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return x_found->ref;
+   return x_found->n_ref;
 }
 
 short        /*-> find largest used col/row in tab ---[ ------ [gn.210.212.11]*/ /*-[00.0000.304.!]-*/ /*-[--.---.---.--]-*/
@@ -686,10 +686,10 @@ NODE_max_used        (char a_index, char a_type)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_LOCS   yLOG_value   ("max used"  , x_found->ref);
+   DEBUG_LOCS   yLOG_value   ("max used"  , x_found->n_ref);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
-   return x_found->ref;
+   return x_found->n_ref;
 }
 
 short
@@ -715,10 +715,10 @@ NODE_max             (char a_index, char a_type)
       return rce;
    }
    /*---(find max)-----------------------*/
-   DEBUG_LOCS   yLOG_value   ("max col"   , x_tab->ncol);
-   DEBUG_LOCS   yLOG_value   ("max row"   , x_tab->nrow);
-   IF_COL   x_max = x_tab->ncol - 1;
-   ELSE_ROW x_max = x_tab->nrow - 1;
+   DEBUG_LOCS   yLOG_value   ("max col"   , x_tab->t_ncol);
+   DEBUG_LOCS   yLOG_value   ("max row"   , x_tab->t_nrow);
+   IF_COL   x_max = x_tab->t_ncol - 1;
+   ELSE_ROW x_max = x_tab->t_nrow - 1;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return x_max;
@@ -769,8 +769,8 @@ NODE__max_set           (char a_index, char a_type, short a_max)
    ELSE_ROW if (a_max >  MAX_row ())  a_max = MAX_row ();
    DEBUG_LOCS   yLOG_value   ("a_max"     , a_max);
    /*---(set max)------------------------*/
-   IF_COL   x_tab->ncol = a_max;
-   ELSE_ROW x_tab->nrow = a_max;
+   IF_COL   x_tab->t_ncol = a_max;
+   ELSE_ROW x_tab->t_nrow = a_max;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return a_max;
@@ -817,8 +817,8 @@ NODE__printables         (char a_type, tNODE *a_node)
       return rce;
    }
    /*---(walk cells)---------------------*/
-   DEBUG_LOCS   yLOG_value   ("count"     , a_node->count);
-   x_cell = a_node->n_head;
+   DEBUG_LOCS   yLOG_value   ("count"     , a_node->n_dcount);
+   x_cell = a_node->n_dhead;
    while (x_cell != NULL) {
       if (x_cell->d_type == YCALC_DATA_MERGED) {
          yCALC_merge_source (x_cell->d_ycalc, &x_owner);
@@ -827,8 +827,8 @@ NODE__printables         (char a_type, tNODE *a_node)
          rc = api_ycalc_printer (x_cell);
       }
       DEBUG_LOCS   yLOG_complex ("x_cell"    , "%-10.10p, %-10.10s, %4d, %2då%sæ", x_cell, x_cell->d_label, rc, strlen (x_cell->d_print), x_cell->d_print);
-      IF_COL   x_cell = x_cell->c_next;
-      ELSE_ROW x_cell = x_cell->r_next;
+      IF_COL   x_cell = x_cell->d_Cnext;
+      ELSE_ROW x_cell = x_cell->d_Rnext;
    }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
@@ -854,13 +854,13 @@ NODE_size                (char a_index, char a_type, short a_ref)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_LOCS   yLOG_complex ("tab"       , "%c, %2d, %s", x_tab->abbr, x_tab->tab, x_tab->name);
+   DEBUG_LOCS   yLOG_complex ("tab"       , "%c, %2d, %s", x_tab->t_abbr, x_tab->t_tab, x_tab->t_name);
    /*---(find col/row)-------------------*/
    NODE_by_index (&x_node, x_tab, a_type, a_ref);
    DEBUG_LOCS   yLOG_point   ("x_node"    , x_node);
    if (x_node != NULL) {
-      DEBUG_LOCS   yLOG_complex ("node"      , "%c, %2dr, %2ds", x_node->type, x_node->ref, x_node->size);
-      x_size = x_node->size;
+      DEBUG_LOCS   yLOG_complex ("node"      , "%c, %2dr, %2ds", x_node->n_type, x_node->n_ref, x_node->n_size);
+      x_size = x_node->n_size;
    } else {
       IF_COL   x_size = DEF_WIDTH;
       ELSE_ROW x_size = DEF_HEIGHT;
@@ -908,12 +908,12 @@ NODE__resize            (char u, char a_type, short a_ref, uchar a_size, char a_
       return rce;
    }
    /*---(statistics)---------------------*/
-   DEBUG_LOCS   yLOG_value   ("count"     , x_node->count);
-   DEBUG_LOCS   yLOG_value   ("size"      , x_node->size);
-   x_prev = x_node->size;
+   DEBUG_LOCS   yLOG_value   ("count"     , x_node->n_dcount);
+   DEBUG_LOCS   yLOG_value   ("size"      , x_node->n_size);
+   x_prev = x_node->n_size;
    /*---(check for keys)-----------------*/
    if (a_key != 0) {
-      a_size = x_node->size;
+      a_size = x_node->n_size;
       /*---(width)-------------*/
       switch (a_key) {
       case  'M' : a_size  = MIN_WIDTH;                   break;
@@ -951,17 +951,17 @@ NODE__resize            (char u, char a_type, short a_ref, uchar a_size, char a_
       if (a_size  > MAX_HEIGHT)   a_size = MAX_HEIGHT;
    }
    DEBUG_LOCS   yLOG_value   ("a_size*"   , a_size);
-   /*> if (a_size == x_node->size) {                                                  <* 
+   /*> if (a_size == x_node->n_size) {                                                  <* 
     *>    DEBUG_LOCS   yLOG_note    ("already set to new size (no action)");          <* 
     *>    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);                                   <* 
     *>    return 0;                                                                   <* 
     *> }                                                                              <*/
    /*---(update)-------------------------*/
-   x_node->size = a_size;
+   x_node->n_size = a_size;
    /*---(check if default size)----------*/
    IF_DEFAULT {
       DEBUG_LOCS   yLOG_note    ("making default size");
-      if (x_node->count == 0) {
+      if (x_node->n_dcount == 0) {
          NODE_free (&x_node);
          DEBUG_LOCS   yLOG_point   ("x_node"    , x_node);
          if (x_node == NULL) {
@@ -1029,13 +1029,13 @@ NODE_freeze           (int a_index, char a_type, int a_beg, int a_end)
    }
    /*---(save)---------------------------*/
    IF_COL {
-      x_tab->froz_col    = 'y';
-      x_tab->froz_bcol   = a_beg;
-      x_tab->froz_ecol   = a_end;
+      x_tab->t_froz_col    = 'y';
+      x_tab->t_froz_bcol   = a_beg;
+      x_tab->t_froz_ecol   = a_end;
    } ELSE_ROW {
-      x_tab->froz_row    = 'y';
-      x_tab->froz_brow   = a_beg;
-      x_tab->froz_erow   = a_end;
+      x_tab->t_froz_row    = 'y';
+      x_tab->t_froz_brow   = a_beg;
+      x_tab->t_froz_erow   = a_end;
    }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
@@ -1060,13 +1060,13 @@ NODE_unfreeze         (int a_index, char a_type)
    }
    /*---(save)---------------------------*/
    IF_COL {
-      x_tab->froz_col    = '-';
-      x_tab->froz_bcol   = 0;
-      x_tab->froz_ecol   = 0;
+      x_tab->t_froz_col    = '-';
+      x_tab->t_froz_bcol   = 0;
+      x_tab->t_froz_ecol   = 0;
    } ELSE_ROW {
-      x_tab->froz_row    = '-';
-      x_tab->froz_brow   = 0;
-      x_tab->froz_erow   = 0;
+      x_tab->t_froz_row    = '-';
+      x_tab->t_froz_brow   = 0;
+      x_tab->t_froz_erow   = 0;
    }
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
@@ -1147,11 +1147,11 @@ NODE_writer              (int c, char a_type, tNODE *a_node, short n)
    ELSE_ROW ystrlcpy (x_verb, "height"  , LEN_LABEL);
    DEBUG_OUTP   yLOG_info    ("x_verb"    , x_verb);
    /*---(filter)----------------------*/
-   x_size = a_node->size;
+   x_size = a_node->n_size;
    DEBUG_OUTP   yLOG_value   ("x_size"    , x_size);
    /*---(write)-----------------------*/
-   IF_COL   rc = ystr4gyges (a_node->tab, a_node->ref, 0, 0, 0, x_label, YSTR_USABLE);
-   ELSE_ROW rc = ystr4gyges (a_node->tab, 0, a_node->ref, 0, 0, x_label, YSTR_USABLE);
+   IF_COL   rc = ystr4gyges (a_node->n_tab, a_node->n_ref, 0, 0, 0, x_label, YSTR_USABLE);
+   ELSE_ROW rc = ystr4gyges (a_node->n_tab, 0, a_node->n_ref, 0, 0, x_label, YSTR_USABLE);
    yPARSE_vprintf (c, x_verb, x_label, x_size, n);
    /*---(complete)-----------------------*/
    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
@@ -1190,8 +1190,8 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
          rc = NODE_by_index  (&x_node, x_tab, a_type, a_ref);
          x_prev == x_node;
          rc2 = NODE_by_cursor (&x_prev, x_tab, a_type, '<');
-         if (x_prev != NULL)  DEBUG_OUTP   yLOG_complex ("prev"      , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_prev, x_prev->size, x_prev->ref, n, c);
-         if (rc2 == 0 && x_prev != NULL && x_prev != x_node && x_prev->ref + 1 == x_node->ref && x_prev->size == x_node->size) {
+         if (x_prev != NULL)  DEBUG_OUTP   yLOG_complex ("prev"      , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_prev, x_prev->n_size, x_prev->n_ref, n, c);
+         if (rc2 == 0 && x_prev != NULL && x_prev != x_node && x_prev->n_ref + 1 == x_node->n_ref && x_prev->n_size == x_node->n_size) {
             DEBUG_OUTP   yLOG_note    ("x_prev matches size, so record already written");
             break;
          }
@@ -1199,7 +1199,7 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
       /*---(or, start at head)-*/
       else rc = NODE_by_cursor (&x_node, x_tab, a_type, '[');
       /*---(check node)--------*/
-      if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->size, x_node->ref, n, c);
+      if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->n_size, x_node->n_ref, n, c);
       else                 DEBUG_OUTP   yLOG_note    ("col is null");
       /*---(loop col/row)------*/
       while (x_node != NULL && rc == 0) {
@@ -1212,10 +1212,10 @@ NODE_writer_driver       (char a_index, char a_type, short a_ref)
          x_save = x_node;
          n      = 0;
          /*---(find similar)------*/
-         while (x_node != NULL && rc == 0 && x_node->size == x_save->size && x_node->ref == x_save->ref + n) {
+         while (x_node != NULL && rc == 0 && x_node->n_size == x_save->n_size && x_node->n_ref == x_save->n_ref + n) {
             ++n;
             rc = NODE_by_cursor (&x_node, x_tab, a_type, '>');
-            if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->size, x_node->ref, n, c);
+            if (x_node != NULL)  DEBUG_OUTP   yLOG_complex ("col"       , "%3drc, %-10.10p, %2ds, %4d#, %2dn, %2dc", rc, x_node, x_node->n_size, x_node->n_ref, n, c);
             else                 DEBUG_OUTP   yLOG_note    ("col is null");
          }
          /*---(write)-------------*/
@@ -1307,7 +1307,7 @@ static void  o___MAPPER__________o () { return; }
  *>    rc = NODE_by_index (&x_node, x_tab, x_type, x_opps);                                                         <* 
  *>    DEBUG_MAP    yLOG_complex ("node"      , "%3drc, %-10.10p", rc, x_node);                                     <* 
  *>    if (rc == 0 && x_node != NULL) {                                                                             <* 
- *>       DEBUG_MAP    yLOG_complex ("node more" , "%c %4d %4d", x_node->type, x_node->ref, x_node->count);         <* 
+ *>       DEBUG_MAP    yLOG_complex ("node more" , "%c %4d %4d", x_node->n_type, x_node->n_ref, x_node->n_dcount);         <* 
  *>    }                                                                                                            <* 
  *>    /+---(clear used)---------------------+/                                                                     <* 
  *>    for (i = 0; i <  LEN_HUGE; ++i) x_map->used [i] = '\0';                                                      <* 
@@ -1347,11 +1347,11 @@ static void  o___MAPPER__________o () { return; }
  *>          IF_COL   x_size = DEF_WIDTH;                                              <* 
  *>          ELSE_ROW x_size = DEF_HEIGHT;                                             <* 
  *>       } else {                                                                     <* 
- *>          if (x_ref < x_node->ref) {                                                <* 
+ *>          if (x_ref < x_node->n_ref) {                                                <* 
  *>             IF_COL   x_size = DEF_WIDTH;                                           <* 
  *>             ELSE_ROW x_size = DEF_HEIGHT;                                          <* 
  *>          } else {                                                                  <* 
- *>             x_size = x_node->size;                                                 <* 
+ *>             x_size = x_node->n_size;                                                 <* 
  *>             rc = NODE_by_cursor (&x_node, a_tab, a_type, '>');                     <* 
  *>          }                                                                         <* 
  *>       }                                                                            <* 
@@ -1409,16 +1409,16 @@ static void  o___MAPPER__________o () { return; }
  *>       DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                                                                         <* 
  *>       return 0;                                                                                                                                         <* 
  *>    }                                                                                                                                                    <* 
- *>    DEBUG_MAP    yLOG_complex ("node"      , "%c %4d %4d", a_node->type, a_node->ref, a_node->count);                                                    <* 
+ *>    DEBUG_MAP    yLOG_complex ("node"      , "%c %4d %4d", a_node->n_type, a_node->n_ref, a_node->n_dcount);                                                    <* 
  *>    /+---(mark used)----------------------+/                                                                                                             <* 
- *>    x_cell = a_node->n_head;                                                                                                                             <* 
+ *>    x_cell = a_node->n_dhead;                                                                                                                             <* 
  *>    while (rc == 0 && x_cell != NULL) {                                                                                                                  <* 
  *>       DEBUG_MAP    yLOG_info    ("cell"      , x_cell->d_label);                                                                                          <* 
  *>       IF_COL   n = x_cell->d_col;                                                                                                                         <* 
  *>       ELSE_ROW n = x_cell->d_row;                                                                                                                         <* 
  *>       a_map->used [n] = '+';                                                                                                                            <* 
- *>       IF_COL   x_cell = x_cell->r_next;                                                                                                                 <* 
- *>       ELSE_ROW x_cell = x_cell->c_next;                                                                                                                 <* 
+ *>       IF_COL   x_cell = x_cell->d_Rnext;                                                                                                                 <* 
+ *>       ELSE_ROW x_cell = x_cell->d_Cnext;                                                                                                                 <* 
  *>    }                                                                                                                                                    <* 
  *>    /+---(mark current)-------------------+/                                                                                                             <* 
  *>    if (a_map->used [a_curr] == '+')  a_map->used [a_curr] = 'Ï';                                                                                        <* 
@@ -1445,8 +1445,8 @@ static void  o___MAPPER__________o () { return; }
  *>    /+---(find min)-----------------------+/                                        <* 
  *>    rc = NODE_by_cursor (&x_node, a_tab, a_type, '[');                              <* 
  *>    while (rc == 0 && x_node != NULL) {                                             <* 
- *>       if (x_node->count > 0) {                                                     <* 
- *>          x_min = x_node->ref;                                                      <* 
+ *>       if (x_node->n_dcount > 0) {                                                     <* 
+ *>          x_min = x_node->n_ref;                                                      <* 
  *>          break;                                                                    <* 
  *>       }                                                                            <* 
  *>       rc = NODE_by_cursor (&x_node, a_tab, a_type, '>');                           <* 
@@ -1454,8 +1454,8 @@ static void  o___MAPPER__________o () { return; }
  *>    /+---(find max)-----------------------+/                                        <* 
  *>    rc = NODE_by_cursor (&x_node, a_tab, a_type, ']');                              <* 
  *>    while (rc == 0 && x_node != NULL) {                                             <* 
- *>       if (x_node->count > 0)  {                                                    <* 
- *>          x_max = x_node->ref;                                                      <* 
+ *>       if (x_node->n_dcount > 0)  {                                                    <* 
+ *>          x_max = x_node->n_ref;                                                      <* 
  *>          break;                                                                    <* 
  *>       }                                                                            <* 
  *>       rc = NODE_by_cursor (&x_node, a_tab, a_type, '<');                           <* 
@@ -1495,16 +1495,16 @@ static void  o___MAPPER__________o () { return; }
  *>       return 0;                                                                                  <* 
  *>    }                                                                                             <* 
  *>    /+---(glmin)--------------------------+/                                                      <* 
- *>    DEBUG_MAP    yLOG_point   ("n_head"    , a_node->n_head);                                     <* 
- *>    if (a_node->n_head != NULL) {                                                                 <* 
- *>       IF_COL   a_map->glmin = a_node->n_head->d_col;                                               <* 
- *>       ELSE_ROW a_map->glmin = a_node->n_head->d_row;                                               <* 
+ *>    DEBUG_MAP    yLOG_point   ("n_dhead"    , a_node->n_dhead);                                     <* 
+ *>    if (a_node->n_dhead != NULL) {                                                                 <* 
+ *>       IF_COL   a_map->glmin = a_node->n_dhead->d_col;                                               <* 
+ *>       ELSE_ROW a_map->glmin = a_node->n_dhead->d_row;                                               <* 
  *>    }                                                                                             <* 
  *>    /+---(glmax)--------------------------+/                                                      <* 
- *>    DEBUG_MAP    yLOG_point   ("n_tail"    , a_node->n_tail);                                     <* 
- *>    if (a_node->n_tail != NULL) {                                                                 <* 
- *>       IF_COL   a_map->glmax = a_node->n_tail->d_col;                                               <* 
- *>       ELSE_ROW a_map->glmax = a_node->n_tail->d_row;                                               <* 
+ *>    DEBUG_MAP    yLOG_point   ("n_dtail"    , a_node->n_dtail);                                     <* 
+ *>    if (a_node->n_dtail != NULL) {                                                                 <* 
+ *>       IF_COL   a_map->glmax = a_node->n_dtail->d_col;                                               <* 
+ *>       ELSE_ROW a_map->glmax = a_node->n_dtail->d_row;                                               <* 
  *>    }                                                                                             <* 
  *>    /+---(complete)-----------------------+/                                                      <* 
  *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                     <* 
@@ -1684,7 +1684,7 @@ NODE_map_update            (char a_type, char a_level)
       /*---(handle used)-----------------*/
       if (x_curr != NULL) {
          rc = NODE_by_index (&x_node, CTAB, a_type, i);
-         if (x_node != NULL)   x_wide = x_node->size;
+         if (x_node != NULL)   x_wide = x_node->n_size;
          rc = yMAP_append (i, x_wide, 'Ï');
       }
       /*---(handle empty)----------------*/
@@ -1795,7 +1795,7 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
          for (i = 0; i < 20; ++i) {
             NODE_by_index (&x_node, x_tab, a_type, i);
             if (x_node == NULL)    ystrlcpy (s, "  -" , LEN_LABEL);
-            else                { sprintf (s, " %2d", x_node->count); ++c; }
+            else                { sprintf (s, " %2d", x_node->n_dcount); ++c; }
             ystrlcat (t, s, LEN_HUND);
          }
          snprintf(unit_answer, LEN_FULL, "%-3.3s counts   (%c) : (%3d)%s", x_pre, x_abbr, c, t);
@@ -1805,26 +1805,26 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
       if (x_tab == NULL)  snprintf(unit_answer, LEN_FULL, "%-3.3s %-7.7s  (-) : -  -=-  --    -s  -c  -f  -b  []", x_pre, a_question);
       else {
          if (strcmp (a_question, "current"       ) != 0)  NODE_by_index (&x_node, x_tab, a_type, a_ref);
-         else                                             { x_node = s_curr; if (x_node != NULL) a_ref = x_node->ref; }
+         else                                             { x_node = s_curr; if (x_node != NULL) a_ref = x_node->n_ref; }
          if (x_node == NULL)  snprintf(unit_answer, LEN_FULL, "%-3.3s %-7.7s  (%c) : -  -=-  --    -s  -c  -f  -b  []", x_pre, a_question, x_abbr);
          else {
-            IF_COL   { x_curr = x_node->n_head; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->c_next; } }
-            ELSE_ROW { x_curr = x_node->n_head; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->r_next; } }
-            IF_COL   { x_curr = x_node->n_tail; while (x_curr != NULL) { ++x_back; x_curr = x_curr->c_prev; } }
-            ELSE_ROW { x_curr = x_node->n_tail; while (x_curr != NULL) { ++x_back; x_curr = x_curr->r_prev; } }
-            x_curr = x_node->n_head;
+            IF_COL   { x_curr = x_node->n_dhead; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->d_Cnext; } }
+            ELSE_ROW { x_curr = x_node->n_dhead; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->d_Rnext; } }
+            IF_COL   { x_curr = x_node->n_dtail; while (x_curr != NULL) { ++x_back; x_curr = x_curr->d_Cprev; } }
+            ELSE_ROW { x_curr = x_node->n_dtail; while (x_curr != NULL) { ++x_back; x_curr = x_curr->d_Rprev; } }
+            x_curr = x_node->n_dhead;
             while (x_curr != NULL) {
                IF_COL   sprintf (s, "%d", x_curr->d_row);
                ELSE_ROW sprintf (s, "%d", x_curr->d_col);
-               if (x_curr != x_node->n_head)   ystrlcat (t, ",", LEN_HUND);
+               if (x_curr != x_node->n_dhead)   ystrlcat (t, ",", LEN_HUND);
                ystrlcat (t, s, LEN_HUND);
-               IF_COL   x_curr = x_curr->c_next;
-               ELSE_ROW x_curr = x_curr->r_next;
+               IF_COL   x_curr = x_curr->d_Cnext;
+               ELSE_ROW x_curr = x_curr->d_Rnext;
             }
-            x_abbr2 = LABEL_tab (x_node->tab);
+            x_abbr2 = LABEL_tab (x_node->n_tab);
             IF_COL   ystrlcpy (x_label, LABEL_col (a_ref), LEN_LABEL);
             ELSE_ROW ystrlcpy (x_label, LABEL_row (a_ref), LEN_LABEL);
-            snprintf(unit_answer, LEN_FULL, "%-3.3s %-7.7s  (%c) : %c %2d=%-2d %-4.4s %2ds %2dc %2df %2db  [%s]", x_pre, a_question, x_abbr, x_abbr2, a_ref, x_node->ref, x_label, x_node->size, x_node->count, x_fore, x_back, t);
+            snprintf(unit_answer, LEN_FULL, "%-3.3s %-7.7s  (%c) : %c %2d=%-2d %-4.4s %2ds %2dc %2df %2db  [%s]", x_pre, a_question, x_abbr, x_abbr2, a_ref, x_node->n_ref, x_label, x_node->n_size, x_node->n_dcount, x_fore, x_back, t);
          }
       }
    }

@@ -122,21 +122,21 @@ TAB_ground              (void)
    my.ptab   = &s_grounded;
    PTAB      = &s_grounded;
    /*---(cols)---------*/
-   NCOL      = PTAB->ncol       = 0;
-   CCOL      = PTAB->ccol       = 0;
-   BCOL      = PTAB->bcol       = 0;
-   ECOL      = PTAB->ecol       = 0;
-   FR_COL    = PTAB->froz_col   = '-';
-   FR_BCOL   = PTAB->froz_bcol  = 0;
-   FR_ECOL   = PTAB->froz_ecol  = 0;
+   NCOL      = PTAB->t_ncol       = 0;
+   CCOL      = PTAB->t_ccol       = 0;
+   BCOL      = PTAB->t_bcol       = 0;
+   ECOL      = PTAB->t_ecol       = 0;
+   FR_COL    = PTAB->t_froz_col   = '-';
+   FR_BCOL   = PTAB->t_froz_bcol  = 0;
+   FR_ECOL   = PTAB->t_froz_ecol  = 0;
    /*---(rows)---------*/
-   NROW      = PTAB->nrow       = 0;
-   CROW      = PTAB->crow       = 0;
-   BROW      = PTAB->brow       = 0;
-   EROW      = PTAB->erow       = 0;
-   FR_ROW    = PTAB->froz_row   = '-';
-   FR_BROW   = PTAB->froz_brow  = 0;
-   FR_EROW   = PTAB->froz_erow  = 0;
+   NROW      = PTAB->t_nrow       = 0;
+   CROW      = PTAB->t_crow       = 0;
+   BROW      = PTAB->t_brow       = 0;
+   EROW      = PTAB->t_erow       = 0;
+   FR_ROW    = PTAB->t_froz_row   = '-';
+   FR_BROW   = PTAB->t_froz_brow  = 0;
+   FR_EROW   = PTAB->t_froz_erow  = 0;
    return 0;
 }
 
@@ -163,23 +163,23 @@ TAB_retrieve            (void)
    PTAB      = s_master [CTAB];
    /*---(cols)---------*/
    DEBUG_LOCS   yLOG_note    ("cols");
-   NCOL      = PTAB->ncol;
-   CCOL      = PTAB->ccol;
-   BCOL      = PTAB->bcol;
-   ECOL      = PTAB->ecol;
-   FR_COL    = PTAB->froz_col;
-   FR_BCOL   = PTAB->froz_bcol;
-   FR_ECOL   = PTAB->froz_ecol;
+   NCOL      = PTAB->t_ncol;
+   CCOL      = PTAB->t_ccol;
+   BCOL      = PTAB->t_bcol;
+   ECOL      = PTAB->t_ecol;
+   FR_COL    = PTAB->t_froz_col;
+   FR_BCOL   = PTAB->t_froz_bcol;
+   FR_ECOL   = PTAB->t_froz_ecol;
    DEBUG_LOCS   yLOG_complex ("col"       , "%3dn, %3db, %3dc, %3de, ", NCOL, BCOL, CCOL, ECOL);
    /*---(rows)---------*/
    DEBUG_LOCS   yLOG_note    ("rows");
-   NROW      = PTAB->nrow;
-   CROW      = PTAB->crow;
-   BROW      = PTAB->brow;
-   EROW      = PTAB->erow;
-   FR_ROW    = PTAB->froz_row;
-   FR_BROW   = PTAB->froz_brow;
-   FR_EROW   = PTAB->froz_erow;
+   NROW      = PTAB->t_nrow;
+   CROW      = PTAB->t_crow;
+   BROW      = PTAB->t_brow;
+   EROW      = PTAB->t_erow;
+   FR_ROW    = PTAB->t_froz_row;
+   FR_BROW   = PTAB->t_froz_brow;
+   FR_EROW   = PTAB->t_froz_erow;
    DEBUG_LOCS   yLOG_complex ("row"       , "%3dn, %3db, %3dc, %3de, ", NROW, BROW, CROW, EROW);
    /*---(reposition)---------------------*/
    DEBUG_LOCS   yLOG_note    ("reposition");
@@ -219,23 +219,23 @@ TAB_save               (void)
    DEBUG_LOCS   yLOG_value   ("CTAB"      , CTAB);
    DEBUG_LOCS   yLOG_note    ("cols");
    /*---(rows)---------*/
-   PTAB->ncol      = NCOL;
-   PTAB->ccol      = CCOL;
-   PTAB->bcol      = BCOL;
-   PTAB->ecol      = ECOL;
-   PTAB->froz_col  = FR_COL;
-   PTAB->froz_bcol = FR_BCOL;
-   PTAB->froz_ecol = FR_ECOL;
+   PTAB->t_ncol      = NCOL;
+   PTAB->t_ccol      = CCOL;
+   PTAB->t_bcol      = BCOL;
+   PTAB->t_ecol      = ECOL;
+   PTAB->t_froz_col  = FR_COL;
+   PTAB->t_froz_bcol = FR_BCOL;
+   PTAB->t_froz_ecol = FR_ECOL;
    DEBUG_LOCS   yLOG_complex ("col"       , "%3dn, %3db, %3dc, %3de, ", NCOL, BCOL, CCOL, ECOL);
    /*---(rows)---------*/
    DEBUG_LOCS   yLOG_note    ("rows");
-   PTAB->nrow      = NROW;
-   PTAB->crow      = CROW;
-   PTAB->brow      = BROW;
-   PTAB->erow      = EROW;
-   PTAB->froz_row  = FR_ROW;
-   PTAB->froz_brow = FR_BROW;
-   PTAB->froz_erow = FR_EROW;
+   PTAB->t_nrow      = NROW;
+   PTAB->t_crow      = CROW;
+   PTAB->t_brow      = BROW;
+   PTAB->t_erow      = EROW;
+   PTAB->t_froz_row  = FR_ROW;
+   PTAB->t_froz_brow = FR_BROW;
+   PTAB->t_froz_erow = FR_EROW;
    DEBUG_LOCS   yLOG_complex ("row"       , "%3dn, %3db, %3dc, %3de, ", NROW, BROW, CROW, EROW);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
@@ -289,40 +289,40 @@ TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_siz
    }
    /*---(populate)-----------------------*/
    DEBUG_LOCS   yLOG_note    ("populate");
-   x_new->tab      = a_index;
-   x_new->abbr     = x_abbr;
-   x_new->name     = g_tbd;
-   x_new->type     = G_TAB_FIXED;
+   x_new->t_tab       = a_index;
+   x_new->t_abbr      = x_abbr;
+   x_new->t_name      = g_tbd;
+   x_new->t_type      = G_TAB_FIXED;
    /*---(tie to master list)-------------*/
    DEBUG_LOCS   yLOG_note    ("attach");
    s_master [a_index] = x_new;
    /*---(columns)------------------------*/
    DEBUG_LOCS   yLOG_note    ("clear column data");
-   x_new->C_head    = NULL;
-   x_new->C_tail    = NULL;
-   x_new->C_count   = 0;
-   x_new->ncol      = 0;
-   x_new->bcol      = 0;
-   x_new->ccol      = 0;
-   x_new->ecol      = 0;
-   x_new->froz_col  = '-';
-   x_new->froz_bcol = 0;
-   x_new->froz_ecol = 0;
+   x_new->t_Chead     = NULL;
+   x_new->t_Ctail     = NULL;
+   x_new->t_Ccount    = 0;
+   x_new->t_ncol      = 0;
+   x_new->t_bcol      = 0;
+   x_new->t_ccol      = 0;
+   x_new->t_ecol      = 0;
+   x_new->t_froz_col  = '-';
+   x_new->t_froz_bcol = 0;
+   x_new->t_froz_ecol = 0;
    /*---(rows)---------------------------*/
    DEBUG_LOCS   yLOG_note    ("clear row data");
-   x_new->R_head    = NULL;
-   x_new->R_tail    = NULL;
-   x_new->R_count   = 0;
-   x_new->nrow      = 0;
-   x_new->brow      = 0;
-   x_new->crow      = 0;
-   x_new->erow      = 0;
-   x_new->froz_row  = '-';
-   x_new->froz_brow = 0;
-   x_new->froz_erow = 0;
+   x_new->t_Rhead     = NULL;
+   x_new->t_Rtail     = NULL;
+   x_new->t_Rcount    = 0;
+   x_new->t_nrow      = 0;
+   x_new->t_brow      = 0;
+   x_new->t_crow      = 0;
+   x_new->t_erow      = 0;
+   x_new->t_froz_row  = '-';
+   x_new->t_froz_brow = 0;
+   x_new->t_froz_erow = 0;
    /*---(update counts)------------------*/
    DEBUG_LOCS   yLOG_note    ("update counts");
-   x_new->count     = 0;
+   x_new->t_count     = 0;
    ++s_all;
    if (strchr ("®¯¤", s_valids [a_index]) == NULL)   ++s_count;
    DEBUG_LOCS   yLOG_value   ("s_all"     , s_all);
@@ -342,7 +342,7 @@ TAB_new                 (tTAB **a_new, char a_index, uchar *a_name, uchar *a_siz
       if (rc < 0)  TAB_resize (a_index, "z100");
    }
    /*---(focus)--------------------------*/
-   if (my.ptab == NULL || my.ptab == &s_grounded) TAB_switch (s_curr->tab);;
+   if (my.ptab == NULL || my.ptab == &s_grounded) TAB_switch (s_curr->t_tab);;
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -371,8 +371,8 @@ TAB_free                (char a_index)
    yMAP_universe (a_index, YMAP_NADA);
    /*---(depopulate)---------------------*/
    DEBUG_LOCS   yLOG_note    ("depopulate");
-   if (s_master [a_index]->name != NULL && s_master [a_index]->name != g_tbd)  free (s_master [a_index]->name);
-   s_master [a_index]->name = NULL;
+   if (s_master [a_index]->t_name != NULL && s_master [a_index]->t_name != g_tbd)  free (s_master [a_index]->t_name);
+   s_master [a_index]->t_name = NULL;
    /*---(remove from master)-------------*/
    DEBUG_LOCS   yLOG_note    ("detach");
    free (s_master [a_index]);
@@ -748,8 +748,8 @@ TAB_by_name             (tTAB **a_found, uchar *a_regex)
    for (i = 0; i < s_nvalid; ++i) {
       DEBUG_LOCS   yLOG_complex ("checking"  , "%2d %c %-10.10p", i, s_valids [i], s_master [i]);
       if (s_master [i] == NULL)  continue;
-      DEBUG_LOCS   yLOG_info    ("tab"       , s_master [i]->name);
-      rc = yREGEX_filter (s_master [i]->name);
+      DEBUG_LOCS   yLOG_info    ("tab"       , s_master [i]->t_name);
+      rc = yREGEX_filter (s_master [i]->t_name);
       DEBUG_LOCS   yLOG_value   ("exec"      , rc);
       if (rc <= 0)   continue;
       ++x_matches;
@@ -868,14 +868,14 @@ TAB_hook_cell           (tTAB **a_found, char a_index, tCELL *a_cell)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (strchr (G_TAB_LOCKED, x_tab->type) != NULL) {
+   --rce;  if (strchr (G_TAB_LOCKED, x_tab->t_type) != NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(assign)-------------------------*/
-   a_cell->d_tab = x_tab->tab;
-   ++(x_tab->count);
-   DEBUG_LOCS   yLOG_value   ("count"     , x_tab->count);
+   a_cell->d_tab = x_tab->t_tab;
+   ++(x_tab->t_count);
+   DEBUG_LOCS   yLOG_value   ("count"     , x_tab->t_count);
    /*---(return)-------------------------*/
    if (a_found != NULL)  *a_found = x_tab;
    /*---(complete)-----------------------*/
@@ -909,14 +909,14 @@ TAB_unhook_cell         (tCELL *a_cell)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (strchr (G_TAB_LOCKED, x_tab->type) != NULL) {
+   --rce;  if (strchr (G_TAB_LOCKED, x_tab->t_type) != NULL) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(assign)-------------------------*/
    a_cell->d_tab = UNHOOKED;
-   --(x_tab->count);
-   DEBUG_LOCS   yLOG_value   ("count"     , x_tab->count);
+   --(x_tab->t_count);
+   DEBUG_LOCS   yLOG_value   ("count"     , x_tab->t_count);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -957,8 +957,8 @@ TAB_init                (void)
    s_all    = 0;
    s_count  = 0;
    s_index  = -1;
-   s_grounded.type = 'N';
-   s_grounded.abbr = '©';
+   s_grounded.t_type = 'N';
+   s_grounded.t_abbr = '©';
    TAB_ground ();
    /*---(create base tabs)---------------*/
    /*> TAB_new_in_abbr ('0', NULL, NULL);                                             <* 
@@ -1000,36 +1000,36 @@ TAB_cleanse             (tTAB *a_tab)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_LOCS   yLOG_complex ("tab"       , "%2d, %c, %s, %c", a_tab->tab, a_tab->abbr, a_tab->name, a_tab->type);
+   DEBUG_LOCS   yLOG_complex ("tab"       , "%2d, %c, %s, %c", a_tab->t_tab, a_tab->t_abbr, a_tab->t_name, a_tab->t_type);
    /*---(cells)--------------------------*/
-   DEBUG_LOCS   yLOG_value   ("cell count", a_tab->count);
-   --rce;  if (a_tab->count > 0) {
+   DEBUG_LOCS   yLOG_value   ("cell count", a_tab->t_count);
+   --rce;  if (a_tab->t_count > 0) {
       DEBUG_LOCS   yLOG_note    ("BAD NEWS, celss are on this tab");
       rc = rce;
    }
    /*---(columns)------------------------*/
-   DEBUG_LOCS   yLOG_value   ("cols (bef)", a_tab->C_count);
+   DEBUG_LOCS   yLOG_value   ("cols (bef)", a_tab->t_Ccount);
    n = COL_cleanse   (a_tab);
    DEBUG_LOCS   yLOG_value   ("cleanse"   , n);
    --rce;  if (n > 0) {
       DEBUG_LOCS   yLOG_note    ("BAD NEWS, columns are left over");
       rc = rce;
    }
-   DEBUG_LOCS   yLOG_value   ("cols (aft)", a_tab->C_count);
+   DEBUG_LOCS   yLOG_value   ("cols (aft)", a_tab->t_Ccount);
    /*---(rows)---------------------------*/
-   DEBUG_LOCS   yLOG_value   ("rows (bef)", a_tab->R_count);
+   DEBUG_LOCS   yLOG_value   ("rows (bef)", a_tab->t_Rcount);
    n = ROW_cleanse   (a_tab);
    DEBUG_LOCS   yLOG_value   ("cleanse"   , n);
    --rce;  if (n > 0) {
       DEBUG_LOCS   yLOG_note    ("BAD NEWS, columns are left over");
       rc = rce;
    }
-   DEBUG_LOCS   yLOG_value   ("rows (aft)", a_tab->R_count);
+   DEBUG_LOCS   yLOG_value   ("rows (aft)", a_tab->t_Rcount);
    /*---(free)---------------------------*/
    DEBUG_LOCS   yLOG_value   ("ready"     , rc);
    if (rc == 0) {
       DEBUG_LOCS   yLOG_note    ("freeing");
-      TAB_free (a_tab->tab);
+      TAB_free (a_tab->t_tab);
    }
    DEBUG_LOCS   yLOG_value   ("done"      , rc);
    /*---(complete)-----------------------*/
@@ -1053,7 +1053,7 @@ TAB_name             (char a_index, char *a_name)
    --rce;  if (!TAB_live (a_index))              return rce;
    --rce;  if (a_name  == NULL)                  return rce;
    /*---(return)-------------------------*/
-   ystrlcpy (a_name, s_master [a_index]->name, LEN_LABEL);
+   ystrlcpy (a_name, s_master [a_index]->t_name, LEN_LABEL);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1078,8 +1078,8 @@ TAB_rename           (char a_index, char *a_name)
       ystrlcpy (x_name, a_name           , LEN_LABEL);
    }
    /*---(set name)-----------------------*/
-   if (s_master [a_index]->name != NULL && s_master [a_index]->name != g_tbd)  free (s_master [a_index]->name);
-   s_master [a_index]->name = strdup (x_name);
+   if (s_master [a_index]->t_name != NULL && s_master [a_index]->t_name != g_tbd)  free (s_master [a_index]->t_name);
+   s_master [a_index]->t_name = strdup (x_name);
    /*---(complete)-----------------------*/
    return rc;
 }
@@ -1161,7 +1161,7 @@ TAB_switch_key         (uchar a_key)
          return rce;
       }
       x_prev = x_curr;
-      x_curr = x_tab->tab;
+      x_curr = x_tab->t_tab;
    }
    /*---(done)---------------------------*/
    DEBUG_LOCS   yLOG_value   ("x_curr"    , x_curr);
@@ -1188,7 +1188,7 @@ TAB_browse              (char *a_entry)
       return rce;
    }
    /*---(make switch)--------------------*/
-   TAB_switch (x_match->tab);
+   TAB_switch (x_match->t_tab);
    /*---(complete)-----------------------*/
    DEBUG_LOCS   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -1209,7 +1209,7 @@ TAB_used             (char a_index)
    /*---(defense)------------------------*/
    --rce;  if (!TAB_live (a_index))              return rce;
    /*---(complete)-----------------------*/
-   return s_master [a_index]->count;
+   return s_master [a_index]->t_count;
 }
 
 
@@ -1225,7 +1225,7 @@ TAB_size             (char a_index, char *a_max)
    char        rce         =  -10;
    --rce;  if (!TAB_live (a_index))              return rce;
    --rce;  if (a_max   == NULL)                  return rce;
-   ystr4gyges (a_index, s_master [a_index]->ncol - 1, s_master [a_index]->nrow - 1, 0, 0, a_max, YSTR_CHECK);
+   ystr4gyges (a_index, s_master [a_index]->t_ncol - 1, s_master [a_index]->t_nrow - 1, 0, 0, a_max, YSTR_CHECK);
    return 0;
 }
 
@@ -1236,8 +1236,8 @@ TAB_size_detail      (char a_index, ushort *a_col, ushort *a_row)
    if (a_col != NULL)  *a_col = 0;
    if (a_row != NULL)  *a_row = 0;
    --rce;  if (!TAB_live (a_index))              return rce;
-   if (a_col != NULL)  *a_col = s_master [a_index]->ncol - 1;
-   if (a_row != NULL)  *a_row = s_master [a_index]->nrow - 1;
+   if (a_col != NULL)  *a_col = s_master [a_index]->t_ncol - 1;
+   if (a_row != NULL)  *a_row = s_master [a_index]->t_nrow - 1;
    return 0;
 }
 
@@ -1271,7 +1271,7 @@ TAB_resize           (char a_index, char *a_max)
    }
    DEBUG_LOCS   yLOG_info    ("a_max"     , a_max);
    /*---(locked or fixed)----------------*/
-   x_type = s_master [a_index]->type;
+   x_type = s_master [a_index]->t_type;
    DEBUG_LOCS   yLOG_char    ("x_type"    , x_type);
    if (strchr (G_TAB_TYPES, x_type) == NULL) {
       DEBUG_LOCS   yLOG_note    ("tab locked, no adjustment");
@@ -1327,13 +1327,13 @@ TAB_resize           (char a_index, char *a_max)
    switch (x_meth) {
    case G_RESIZE_AUTO   :
       DEBUG_LOCS   yLOG_note    ("auto treatment");
-      if (a_index < 36 && x_type == G_TAB_FIXED)  s_master [a_index]->type = G_TAB_AUTO;
+      if (a_index < 36 && x_type == G_TAB_FIXED)  s_master [a_index]->t_type = G_TAB_AUTO;
       x_col = COL_max_adjust (a_index);
       x_row = ROW_max_adjust (a_index);
       break;
    case G_RESIZE_FIXED  :
       DEBUG_LOCS   yLOG_note    ("fixed size");
-      s_master [a_index]->type = G_TAB_FIXED;
+      s_master [a_index]->t_type = G_TAB_FIXED;
       x_max = COL_max_used   (a_index);
       if (x_max > x_col)  x_col = x_max;
       x_max = ROW_max_used   (a_index);
@@ -1341,13 +1341,13 @@ TAB_resize           (char a_index, char *a_max)
       break;
    case G_RESIZE_MIN    :
       DEBUG_LOCS   yLOG_note    ("minimum size");
-      s_master [a_index]->type = G_TAB_FIXED;
+      s_master [a_index]->t_type = G_TAB_FIXED;
       x_col = COL_max_used   (a_index);
       x_row = ROW_max_used   (a_index);
       break;
    case G_RESIZE_MAX    :
       DEBUG_LOCS   yLOG_note    ("maximum size");
-      s_master [a_index]->type = G_TAB_FIXED;
+      s_master [a_index]->t_type = G_TAB_FIXED;
       x_col = MAX_col ();
       x_row = MAX_row ();
       break;
@@ -1362,8 +1362,8 @@ TAB_resize           (char a_index, char *a_max)
    }
    /*---(adjust tab)---------------------*/
    DEBUG_LOCS   yLOG_note    ("fix tab settings");
-   s_master [a_index]->ncol = x_col + 1;
-   s_master [a_index]->nrow = x_row + 1;
+   s_master [a_index]->t_ncol = x_col + 1;
+   s_master [a_index]->t_nrow = x_row + 1;
    /*---(refresh map)--------------------*/
    DEBUG_CELL   yLOG_value   ("NCEL (bef)", NCEL);
    yMAP_refresh_full ();
@@ -1390,7 +1390,7 @@ TAB_type             (char a_index)
    /*---(defense)------------------------*/
    --rce;  if (!TAB_live (a_index))              return rce;
    /*---(complete)-----------------------*/
-   return s_master [a_index]->type;
+   return s_master [a_index]->t_type;
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.320.222.11]*/ /*-[00.0000.00#.!]-*/ /*-[--.---.---.--]-*/
@@ -1401,7 +1401,7 @@ TAB_retype           (char a_index, char a_type)
    char        x_type      =  '-';
    /*---(defense)------------------------*/
    --rce;  if (!TAB_live (a_index))              return rce;
-   x_type = s_master [a_index]->type;
+   x_type = s_master [a_index]->t_type;
    /*---(system tabs)--------------------*/
    if (a_index >= 36) {
       x_type  = G_TAB_AUTO;
@@ -1423,7 +1423,7 @@ TAB_retype           (char a_index, char a_type)
       else                x_type = a_type;
    }
    /*---(save)---------------------------*/
-   s_master [a_index]->type = x_type;
+   s_master [a_index]->t_type = x_type;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1450,7 +1450,7 @@ TAB_is_locked           (char a_tab)
       DEBUG_LOCS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   x_type = s_master [a_tab]->type;
+   x_type = s_master [a_tab]->t_type;
    DEBUG_LOCS   yLOG_schar   (x_type);
    if (x_type == toupper (x_type)) {
       DEBUG_LOCS   yLOG_snote   ("LOCKED");
@@ -1591,49 +1591,49 @@ TAB_line           (char a_index, char a_size, char *a_list)
    /*---(generate stats)--------------*/
    switch (a_size) {
    case 'g' : case 'h' : case 'l' :
-      ystrlpadn   (s_curr->C_count, x_col   , '.', '>',  4);
-      ystrlpadn   (s_curr->R_count, x_row   , '.', '>',  4);
-      ystr4gyges  (s_curr->tab, s_curr->bcol, s_curr->brow, 0, 0, t, YSTR_USABLE);
+      ystrlpadn   (s_curr->t_Ccount, x_col   , '.', '>',  4);
+      ystrlpadn   (s_curr->t_Rcount, x_row   , '.', '>',  4);
+      ystr4gyges  (s_curr->t_tab, s_curr->t_bcol, s_curr->t_brow, 0, 0, t, YSTR_USABLE);
       ystrlpad    (t, x_beg   , '.', '<', 7);
-      ystr4gyges  (s_curr->tab, s_curr->ecol, s_curr->erow, 0, 0, t, YSTR_USABLE);
+      ystr4gyges  (s_curr->t_tab, s_curr->t_ecol, s_curr->t_erow, 0, 0, t, YSTR_USABLE);
       ystrlpad    (t, x_end   , '.', '<', 7);
    case 'm' : /* current, min used, and max used */
-      sprintf (x_by, "%d´%d", s_curr->ncol, s_curr->nrow);
+      sprintf (x_by, "%d´%d", s_curr->t_ncol, s_curr->t_nrow);
       ystrlpad    (x_by, x_by2, '.', '<', 10);
-      ystr4gyges  (s_curr->tab, s_curr->ccol, s_curr->crow, 0, 0, t, YSTR_USABLE);
+      ystr4gyges  (s_curr->t_tab, s_curr->t_ccol, s_curr->t_crow, 0, 0, t, YSTR_USABLE);
       ystrlpad    (t, x_cur   , '.', '<', 7);
-      ystr4gyges  (s_curr->tab, COL_min_used (s_curr->tab), ROW_min_used (s_curr->tab), 0, 0, t, YSTR_USABLE);
+      ystr4gyges  (s_curr->t_tab, COL_min_used (s_curr->t_tab), ROW_min_used (s_curr->t_tab), 0, 0, t, YSTR_USABLE);
       ystrlpad    (t, x_min   , '.', '<', 7);
-      ystr4gyges  (s_curr->tab, COL_max_used (s_curr->tab), ROW_max_used (s_curr->tab), 0, 0, t, YSTR_USABLE);
+      ystr4gyges  (s_curr->t_tab, COL_max_used (s_curr->t_tab), ROW_max_used (s_curr->t_tab), 0, 0, t, YSTR_USABLE);
       ystrlpad    (t, x_max   , '.', '<', 7);
    case 's' : /* name and count */
-      ystrlpad    (s_curr->name   , x_name  , '.', '<', 12);
-      ystrlpadn   (s_curr->count  , x_count , '.', '>',  4);
+      ystrlpad    (s_curr->t_name   , x_name  , '.', '<', 12);
+      ystrlpadn   (s_curr->t_count  , x_count , '.', '>',  4);
    case 't' : /* sizing */
-      ystr4gyges  (s_curr->tab, s_curr->ncol - 1, s_curr->nrow - 1, 0, 0, t, YSTR_USABLE);
+      ystr4gyges  (s_curr->t_tab, s_curr->t_ncol - 1, s_curr->t_nrow - 1, 0, 0, t, YSTR_USABLE);
       ystrlpad    (t, x_siz   , '.', '<', 7);
-      x_type = tolower (s_curr->type);
-      if (s_curr->type != x_type)  x_lock = '!';
+      x_type = tolower (s_curr->t_type);
+      if (s_curr->t_type != x_type)  x_lock = '!';
       break;
    }
    /*---(finish)----------------------*/
    switch (a_size) {
    case 'u' :
-      snprintf (a_list, LEN_FULL, "uni %c %c%c ´", x_tab->abbr, x_type, x_lock);
+      snprintf (a_list, LEN_FULL, "uni %c %c%c ´", x_tab->t_abbr, x_type, x_lock);
       break;
    case 't' :
-      snprintf (a_list, LEN_FULL, "uni %c %c%c %-7.7s   ´", x_tab->abbr, x_type, x_lock, x_siz);
+      snprintf (a_list, LEN_FULL, "uni %c %c%c %-7.7s   ´", x_tab->t_abbr, x_type, x_lock, x_siz);
       break;
    case 's' :
-      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-4.4s´", x_tab->abbr, x_name, x_type, x_lock, x_siz, x_count);
+      snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-4.4s´", x_tab->t_abbr, x_name, x_type, x_lock, x_siz, x_count);
       break;
    case 'm' :
       snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  ´  %-7.7s %-7.7s %-7.7s ´",
-            x_tab->abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max);
+            x_tab->t_abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max);
       break;
    default :
       snprintf (a_list, LEN_FULL, " univrs  %c %-12.12s %c%c %-7.7s %-8.8s %-4.4sn  ´  %-7.7s %-7.7s %-7.7s  ´  %-4.4sc %-4.4sr  ´  %-7.7s %-7.7s      ´",
-            x_tab->abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max, x_col, x_row, x_beg, x_end);
+            x_tab->t_abbr, x_name, x_type, x_lock, x_siz, x_by2, x_count, x_cur, x_min, x_max, x_col, x_row, x_beg, x_end);
       break;
    }
    /*---(complete)--------------------*/
@@ -1843,17 +1843,17 @@ TAB_reader           (int c, uchar *a_verb)
    /*> yMAP_switch (x_tab);                                                           <*/
    DEBUG_INPT   yLOG_info    ("x_beg"     , x_beg);
    if (strcmp (x_beg, "") != 0) {
-      u->ecol = xe;
-      u->erow = ye;
+      u->t_ecol = xe;
+      u->t_erow = ye;
       ystr2gyges (x_beg, NULL, &xb, &yb, NULL, NULL, 0, YSTR_ADAPT);
-      u->bcol = xb;
-      u->brow = yb;
+      u->t_bcol = xb;
+      u->t_brow = yb;
    }
    DEBUG_INPT   yLOG_info    ("x_cur"     , x_cur);
    if (strcmp (x_cur, "") != 0) {
       ystr2gyges (x_cur, NULL, &xc, &yc, NULL, NULL, 0, YSTR_ADAPT);
-      u->ccol = xc;
-      u->crow = yc;
+      u->t_ccol = xc;
+      u->t_crow = yc;
       /*> yMAP_axis_force (YMAP_XAXIS, xb, xc, xe);                                   <*/
       /*> yMAP_axis_force (YMAP_YAXIS, yb, yc, ye);                                   <*/
    }
@@ -1904,8 +1904,8 @@ TAB_writer            (int c, char a_tab)
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   ystr4gyges (a_tab, u->bcol, u->brow, 0, 0, x_beg, YSTR_USABLE);
-   ystr4gyges (a_tab, u->ccol, u->crow, 0, 0, x_cur, YSTR_USABLE);
+   ystr4gyges (a_tab, u->t_bcol, u->t_brow, 0, 0, x_beg, YSTR_USABLE);
+   ystr4gyges (a_tab, u->t_ccol, u->t_crow, 0, 0, x_cur, YSTR_USABLE);
    if (a_tab == CTAB)  x_here = 'y';
    /*---(write)--------------------------*/
    rc = yPARSE_vprintf (c, "tab", x_name, x_max, x_type, x_beg, x_cur, x_here);
@@ -1962,7 +1962,7 @@ TAB_mapper                 (void)
    for (i = 0; i < x_size; ++i) {
       DEBUG_MAP    yLOG_complex ("tab"       , "%2d %p", i, s_master [i]);
       if (s_master [i] != NULL) {
-         if (s_master [i]->count > 0)  rc = yMAP_append (YSTR_UNIV [i], 1, YMAP_USED);
+         if (s_master [i]->t_count > 0)  rc = yMAP_append (YSTR_UNIV [i], 1, YMAP_USED);
          else                          rc = yMAP_append (YSTR_UNIV [i], 1, YMAP_PLACE);
       }
       else  rc = yMAP_append (YSTR_UNIV [i], 1, YMAP_NADA);
@@ -1993,7 +1993,7 @@ TAB_entry               (ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_use
    if      (s_master [a_pos] == NULL)          x_used = YMAP_NADA;
    else if (s_master [a_pos] == &s_grounded)   x_used = YMAP_NADA;
    else {
-      if (s_master [a_pos]->count > 0)  x_used = YMAP_USED;
+      if (s_master [a_pos]->t_count > 0)  x_used = YMAP_USED;
       else                              x_used = YMAP_PLACE;
    }
    /*---(save-back)----------------------*/
