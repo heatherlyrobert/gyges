@@ -2,6 +2,37 @@
 #include   "gyges.h"
 
 
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
 /*
  *  used a s_master array rather than another data structure because the max
  *  count is fixed and small.  a linked list would cost space and complexity.
@@ -825,7 +856,7 @@ TAB_hook_cell           (tTAB **a_found, char a_index, tCELL *a_cell)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (a_cell->tab != UNHOOKED) {
+   --rce;  if (a_cell->d_tab != UNHOOKED) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -842,7 +873,7 @@ TAB_hook_cell           (tTAB **a_found, char a_index, tCELL *a_cell)
       return rce;
    }
    /*---(assign)-------------------------*/
-   a_cell->tab = x_tab->tab;
+   a_cell->d_tab = x_tab->tab;
    ++(x_tab->count);
    DEBUG_LOCS   yLOG_value   ("count"     , x_tab->count);
    /*---(return)-------------------------*/
@@ -868,12 +899,12 @@ TAB_unhook_cell         (tCELL *a_cell)
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   --rce;  if (a_cell->tab == UNHOOKED) {
+   --rce;  if (a_cell->d_tab == UNHOOKED) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(get tab)------------------------*/
-   rc = TAB_pointer (&x_tab, a_cell->tab);
+   rc = TAB_pointer (&x_tab, a_cell->d_tab);
    --rce;  if (rc < 0) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -883,7 +914,7 @@ TAB_unhook_cell         (tCELL *a_cell)
       return rce;
    }
    /*---(assign)-------------------------*/
-   a_cell->tab = UNHOOKED;
+   a_cell->d_tab = UNHOOKED;
    --(x_tab->count);
    DEBUG_LOCS   yLOG_value   ("count"     , x_tab->count);
    /*---(complete)-----------------------*/

@@ -1,5 +1,36 @@
 /*============================----beg-of-source---============================*/
 
+
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
 /*===[[ MODULE ]]=============================================================*
 
  *   application   : s
@@ -370,24 +401,24 @@ CURS_bufdet        (char *a_list)
  *>       sprintf    (x_line, " %-50.50s ", " s --- (null)");                                                                      <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
  *>    } else {                                                                                                                    <* 
- *>       if (x_curr->len < 43)  sprintf    (x_temp, "s %3d [%-s]"     , x_curr->len, x_curr->source);                                      <* 
- *>       else                 sprintf    (x_temp, "s %3d [%-42.42s>", x_curr->len, x_curr->source);                                      <* 
+ *>       if (x_curr->d_len < 43)  sprintf    (x_temp, "s %3d [%-s]"     , x_curr->d_len, x_curr->d_source);                                      <* 
+ *>       else                 sprintf    (x_temp, "s %3d [%-42.42s>", x_curr->d_len, x_curr->d_source);                                      <* 
  *>       sprintf    (x_line, " %-50.50s ", x_temp);                                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
- *>       sprintf    (x_temp, "v     = %-16.6lf", x_curr->v_num);                                                                  <* 
+ *>       sprintf    (x_temp, "v     = %-16.6lf", x_curr->d_num);                                                                  <* 
  *>       sprintf    (x_line, " %-50.50s ", x_temp);                                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
- *>       if (x_curr->v_str == NULL) {                                                                                             <* 
+ *>       if (x_curr->d_str == NULL) {                                                                                             <* 
  *>          sprintf    (x_line, " %-50.50s ", "m --- (null)");                                                                    <* 
  *>          mvprintw   ( i++, 10, x_line);                                                                                        <* 
  *>       } else {                                                                                                                 <* 
- *>          x_len = strlen (x_curr->v_str);                                                                                       <* 
- *>          if (x_len     < 43)  sprintf    (x_temp, "m %3d [%-s]"     , x_len, x_curr->v_str);                                   <* 
- *>          else                 sprintf    (x_temp, "m %3d [%-42.42s>", x_len, x_curr->v_str);                                   <* 
+ *>          x_len = strlen (x_curr->d_str);                                                                                       <* 
+ *>          if (x_len     < 43)  sprintf    (x_temp, "m %3d [%-s]"     , x_len, x_curr->d_str);                                   <* 
+ *>          else                 sprintf    (x_temp, "m %3d [%-42.42s>", x_len, x_curr->d_str);                                   <* 
  *>          sprintf    (x_line, " %-50.50s ", x_temp);                                                                            <* 
  *>          mvprintw   ( i++, 10, x_line);                                                                                        <* 
  *>       }                                                                                                                        <* 
- *>       sprintf    (x_line, " t     %c%-43.43s ", x_curr->type, " ");                                                               <* 
+ *>       sprintf    (x_line, " t     %c%-43.43s ", x_curr->d_type, " ");                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
  *>       sprintf    (x_line, " a     %c%-43.43s ", x_curr->align, " ");                                                               <* 
  *>       mvprintw   ( i++, 10, x_line);                                                                                           <* 
@@ -724,7 +755,7 @@ CURS_color_min       (int a_col, int a_row, tCELL *a_curr)
 {
    /*---(current)------------------------*/
    if      (a_col == CCOL && a_row == CROW)             yVICURSES_by_name ("h_curr");
-   else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("h_used");
+   else if (a_curr != NULL && a_curr->d_note == 's')      yVICURSES_by_name ("h_used");
    /*---(visual-range)-------------------*/
    else if (yMAP_root   (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_root");
    else if (yMAP_visual (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_fill");
@@ -753,7 +784,7 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
    /*---(critical)-----------------------*/
    else if (my.ball == 'y' &&
          strstr (my.cagrios, x_label) != NULL)          yVICURSES_by_name ("i_wand");
-   else if (a_curr != NULL && a_curr->note == 's')      yVICURSES_by_name ("m_srch");
+   else if (a_curr != NULL && a_curr->d_note == 's')      yVICURSES_by_name ("m_srch");
    /*---(visual-range)-------------------*/
    else if (yMAP_root   (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_root");
    else if (yMAP_visual (CTAB, a_col, a_row, NULL))     yVICURSES_by_name ("v_fill");
@@ -773,60 +804,60 @@ CURS_color_full    (int a_col, int a_row, tCELL *a_curr)
       else if (strstr (my.reqs_list, x_label) != NULL)  yVICURSES_by_name ("d_reqs");
       else if (strstr (my.deps_list, x_label) != NULL)  yVICURSES_by_name ("d_pros");
       /*---(trouble)---------------------*/
-      else if (a_curr->type == YCALC_DATA_ERROR)        yVICURSES_by_name ("!_errs");
+      else if (a_curr->d_type == YCALC_DATA_ERROR)        yVICURSES_by_name ("!_errs");
       /*---(pointers)--------------------*/
-      else if (a_curr->type == YCALC_DATA_RANGE)        yVICURSES_by_name ("p_rang");
-      else if (a_curr->type == YCALC_DATA_ADDR )        yVICURSES_by_name ("p_addr");
-      else if (a_curr->type == YCALC_DATA_CADDR)        yVICURSES_by_name ("p_calc");
-      else if (a_curr->type == YCALC_DATA_RLIKE)        yVICURSES_by_name ("9_like");
-      else if (a_curr->type == YCALC_DATA_VAR)          yVICURSES_by_name ("p_vars");
-      else if (a_curr->type == (uchar) YCALC_DATA_VAR)  yVICURSES_by_name ("p_vars");
+      else if (a_curr->d_type == YCALC_DATA_RANGE)        yVICURSES_by_name ("p_rang");
+      else if (a_curr->d_type == YCALC_DATA_ADDR )        yVICURSES_by_name ("p_addr");
+      else if (a_curr->d_type == YCALC_DATA_CADDR)        yVICURSES_by_name ("p_calc");
+      else if (a_curr->d_type == YCALC_DATA_RLIKE)        yVICURSES_by_name ("9_like");
+      else if (a_curr->d_type == YCALC_DATA_VAR)          yVICURSES_by_name ("p_vars");
+      else if (a_curr->d_type == (uchar) YCALC_DATA_VAR)  yVICURSES_by_name ("p_vars");
       /*---(numbers)---------------------*/
-      else if (a_curr->type == YCALC_DATA_NUM  )        yVICURSES_by_name ("9_norm");
-      else if (a_curr->type == YCALC_DATA_NFORM) {
-         if   (yCALC_ncalc (a_curr->ycalc)  < 10)       yVICURSES_by_name ("9_form");
+      else if (a_curr->d_type == YCALC_DATA_NUM  )        yVICURSES_by_name ("9_norm");
+      else if (a_curr->d_type == YCALC_DATA_NFORM) {
+         if   (yCALC_ncalc (a_curr->d_ycalc)  < 10)       yVICURSES_by_name ("9_form");
          else                                           yVICURSES_by_name ("9_dang");
       }
-      else if (a_curr->type == (uchar) YCALC_DATA_MATH) {
-         if   (yCALC_ncalc (a_curr->ycalc)  < 10)       yVICURSES_by_name ("9_form");
+      else if (a_curr->d_type == (uchar) YCALC_DATA_MATH) {
+         if   (yCALC_ncalc (a_curr->d_ycalc)  < 10)       yVICURSES_by_name ("9_form");
          else                                           yVICURSES_by_name ("9_dang");
       }
-      else if (a_curr->type == YCALC_DATA_NLIKE)        yVICURSES_by_name ("9_like");
+      else if (a_curr->d_type == YCALC_DATA_NLIKE)        yVICURSES_by_name ("9_like");
       /*---(strings)---------------------*/
-      else if (a_curr->type == YCALC_DATA_STR  ) {
+      else if (a_curr->d_type == YCALC_DATA_STR  ) {
          /*---(agrios)----------------------*/
-         if      (strchr (a_curr->source, G_CHAR_TRUE    ) != NULL)    yVICURSES_by_name ("a_forc");
-         else if (strchr (a_curr->source, G_CHAR_LIKELY  ) != NULL)    yVICURSES_by_name ("a_forc");
-         else if (strchr (a_curr->source, G_CHAR_EMPTY   ) != NULL)    yVICURSES_by_name ("a_call");
-         else if (strchr (a_curr->source, G_CHAR_FALSE   ) != NULL)    yVICURSES_by_name ("a_call");
-         else if (strchr (a_curr->source, G_CHAR_UNLIKELY) != NULL)    yVICURSES_by_name ("a_call");
-         else if (a_curr->source [0] == ' ' && a_curr->source [1] == '(' && a_curr->source [5] == ')') {
-            if      (strcmp (a_curr->source, " (cur)") == 0)           yVICURSES_by_name ("v_curr");
-            else if (strcmp (a_curr->source, " (req)") == 0)           yVICURSES_by_name ("d_reqs");
-            else if (strcmp (a_curr->source, " (pro)") == 0)           yVICURSES_by_name ("d_pros");
-            else if (strcmp (a_curr->source, " (lik)") == 0)           yVICURSES_by_name ("d_like");
-            else if (strcmp (a_curr->source, " (cop)") == 0)           yVICURSES_by_name ("d_copy");
-            else if (strcmp (a_curr->source, " (wrn)") == 0)           yVICURSES_by_name ("9_dang");
-            else if (strcmp (a_curr->source, " (err)") == 0)           yVICURSES_by_name ("!_errs");
-            else if (strcmp (a_curr->source, " (roo)") == 0)           yVICURSES_by_name ("v_root");
-            else if (strcmp (a_curr->source, " (fil)") == 0)           yVICURSES_by_name ("v_fill");
-            else if (strcmp (a_curr->source, " (ptr)") == 0)           yVICURSES_by_name ("p_addr");
-            else if (strcmp (a_curr->source, " (rng)") == 0)           yVICURSES_by_name ("p_rang");
-            else                                                       yVICURSES_by_name ("#_norm");
-         } else                                                        yVICURSES_by_name ("#_norm");
+         if      (strchr (a_curr->d_source, G_CHAR_TRUE    ) != NULL)    yVICURSES_by_name ("a_forc");
+         else if (strchr (a_curr->d_source, G_CHAR_LIKELY  ) != NULL)    yVICURSES_by_name ("a_forc");
+         else if (strchr (a_curr->d_source, G_CHAR_EMPTY   ) != NULL)    yVICURSES_by_name ("a_call");
+         else if (strchr (a_curr->d_source, G_CHAR_FALSE   ) != NULL)    yVICURSES_by_name ("a_call");
+         else if (strchr (a_curr->d_source, G_CHAR_UNLIKELY) != NULL)    yVICURSES_by_name ("a_call");
+         else if (a_curr->d_source [0] == ' ' && a_curr->d_source [1] == '(' && a_curr->d_source [5] == ')') {
+            if      (strcmp (a_curr->d_source, " (cur)") == 0)           yVICURSES_by_name ("v_curr");
+            else if (strcmp (a_curr->d_source, " (req)") == 0)           yVICURSES_by_name ("d_reqs");
+            else if (strcmp (a_curr->d_source, " (pro)") == 0)           yVICURSES_by_name ("d_pros");
+            else if (strcmp (a_curr->d_source, " (lik)") == 0)           yVICURSES_by_name ("d_like");
+            else if (strcmp (a_curr->d_source, " (cop)") == 0)           yVICURSES_by_name ("d_copy");
+            else if (strcmp (a_curr->d_source, " (wrn)") == 0)           yVICURSES_by_name ("9_dang");
+            else if (strcmp (a_curr->d_source, " (err)") == 0)           yVICURSES_by_name ("!_errs");
+            else if (strcmp (a_curr->d_source, " (roo)") == 0)           yVICURSES_by_name ("v_root");
+            else if (strcmp (a_curr->d_source, " (fil)") == 0)           yVICURSES_by_name ("v_fill");
+            else if (strcmp (a_curr->d_source, " (ptr)") == 0)           yVICURSES_by_name ("p_addr");
+            else if (strcmp (a_curr->d_source, " (rng)") == 0)           yVICURSES_by_name ("p_rang");
+            else                                                         yVICURSES_by_name ("#_norm");
+         } else                                                          yVICURSES_by_name ("#_norm");
       }
-      else if (a_curr->type == YCALC_DATA_SFORM) {
-         /*> if      (strchr (a_curr->v_str, (uchar) ' ') != NULL)   yVICURSES_by_name ("A_call");   <* 
-          *> else if (strchr (a_curr->v_str, (uchar) '™') != NULL)   yVICURSES_by_name ("A_call");   <* 
-          *> else if (strchr (a_curr->v_str, (uchar) 'Ø') != NULL)   yVICURSES_by_name ("A_call");   <* 
-          *> else if (yCALC_ncalc (a_curr->ycalc)  < 10)             yVICURSES_by_name ("#_form");   <*/
-         if      (yCALC_ncalc (a_curr->ycalc)  < 10)    yVICURSES_by_name ("#_form");
+      else if (a_curr->d_type == YCALC_DATA_SFORM) {
+         /*> if      (strchr (a_curr->d_str, (uchar) ' ') != NULL)   yVICURSES_by_name ("A_call");   <* 
+          *> else if (strchr (a_curr->d_str, (uchar) '™') != NULL)   yVICURSES_by_name ("A_call");   <* 
+          *> else if (strchr (a_curr->d_str, (uchar) 'Ø') != NULL)   yVICURSES_by_name ("A_call");   <* 
+          *> else if (yCALC_ncalc (a_curr->d_ycalc)  < 10)             yVICURSES_by_name ("#_form");   <*/
+         if      (yCALC_ncalc (a_curr->d_ycalc)  < 10)    yVICURSES_by_name ("#_form");
          else                                           yVICURSES_by_name ("#_dang");
       }
-      else if (a_curr->type == YCALC_DATA_SLIKE)        yVICURSES_by_name ("#_like");
+      else if (a_curr->d_type == YCALC_DATA_SLIKE)        yVICURSES_by_name ("#_like");
       /*---(constants)-------------------*/
-      else if (a_curr->type == YCALC_DATA_BLANK)        yVICURSES_by_name ("#_dang");
-      else if (a_curr->type == YCALC_DATA_MERGED)       yVICURSES_by_name ("#_norm");
+      else if (a_curr->d_type == YCALC_DATA_BLANK)        yVICURSES_by_name ("#_dang");
+      else if (a_curr->d_type == YCALC_DATA_MERGED)       yVICURSES_by_name ("#_norm");
       else                                              yVICURSES_by_name (">_unkn");
    }
    /*---(complete)-----------------------*/
@@ -855,23 +886,23 @@ CURS_cell          (int a_col, int a_row, short a_ypos, short a_xpos, short a_wi
       ystrlpad (t, x_text, '.', '|', a_wide - 1);
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_text);
    }
-   else if (x_curr == NULL || x_curr->print == NULL)  {
+   else if (x_curr == NULL || x_curr->d_print == NULL)  {
       DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, "");
       mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, YSTR_EMPTY);
    }
    else {
-      DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, x_curr->print);
-      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->print);
+      DEBUG_GRAF_M  yLOG_complex ("CURS_cell" , "%2dc, %2dr, %3dx, %3dy, %2dw, :%s:", a_col, a_row, a_xpos, a_ypos, a_wide, x_curr->d_print);
+      mvprintw (a_ypos, a_xpos, "%-*.*s", a_wide, a_wide, x_curr->d_print);
    }
    /*---(highlight off)------------------*/
    attrset (0);
    /*---(alternate)----------------------*/
-   /*> if (x_curr != NULL && x_curr->note == 's' && a_col == CCOL && a_row == CROW)  {   <* 
+   /*> if (x_curr != NULL && x_curr->d_note == 's' && a_col == CCOL && a_row == CROW)  {   <* 
     *>    yVICURSES_by_name ("m_srch");                                                  <* 
     *>    mvprintw (a_ypos, a_xpos + a_wide - 1, "´");                                   <* 
     *>    attrset (0);                                                                   <* 
     *> }                                                                                 <*/
-   if (x_curr != NULL && x_curr->note == 's') {
+   if (x_curr != NULL && x_curr->d_note == 's') {
       yVICURSES_by_name ("m_srch");
       mvprintw (a_ypos, a_xpos + a_wide - 1, "´");
       attrset (0);
@@ -900,20 +931,20 @@ DRAW_main          (void)
    x_curr    = LOC_cell_at_curr ();
    /*> if (x_curr != x_save) {                                                                  <* 
     *>    if (x_curr != NULL) {                                                                 <* 
-    *>       yCALC_disp_pros (x_curr->ycalc, my.deps_list);                                     <* 
-    *>       yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                                     <* 
-    *>       yCALC_disp_like (x_curr->ycalc, my.like_list);                                     <* 
-    *>       yCALC_disp_copy (x_curr->ycalc, my.copy_list);                                     <* 
-    *>       yCALC_disp_prosplus (x_curr->ycalc, s_pros_plus);                                  <* 
-    *>       yCALC_disp_reqsplus (x_curr->ycalc, s_reqs_plus);                                  <* 
-    *>       /+> switch (x_curr->type) {                                                  <*    <* 
+    *>       yCALC_disp_pros (x_curr->d_ycalc, my.deps_list);                                     <* 
+    *>       yCALC_disp_reqs (x_curr->d_ycalc, my.reqs_list);                                     <* 
+    *>       yCALC_disp_like (x_curr->d_ycalc, my.like_list);                                     <* 
+    *>       yCALC_disp_copy (x_curr->d_ycalc, my.copy_list);                                     <* 
+    *>       yCALC_disp_prosplus (x_curr->d_ycalc, s_pros_plus);                                  <* 
+    *>       yCALC_disp_reqsplus (x_curr->d_ycalc, s_reqs_plus);                                  <* 
+    *>       /+> switch (x_curr->d_type) {                                                  <*    <* 
     *>        *> case YCALC_DATA_NLIKE:                                                   <*    <* 
     *>        *> case YCALC_DATA_SLIKE:                                                   <*    <* 
     *>        *>    ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                              <*    <* 
-    *>        *>    yCALC_disp_reqs (x_curr->ycalc, my.like_list);                        <*    <* 
+    *>        *>    yCALC_disp_reqs (x_curr->d_ycalc, my.like_list);                        <*    <* 
     *>        *>    break;                                                                <*    <* 
     *>        *> default :                                                                <*    <* 
-    *>        *>    yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                        <*    <* 
+    *>        *>    yCALC_disp_reqs (x_curr->d_ycalc, my.reqs_list);                        <*    <* 
     *>        *>    ystrlcpy (my.like_list, "n/a", LEN_RECD);                              <*    <* 
     *>        *>    break;                                                                <*    <* 
     *>        *> }                                                                        <+/   <* 
@@ -929,12 +960,12 @@ DRAW_main          (void)
     *> }                                                                                        <*/
    x_save = x_curr;
    /*> if (x_curr != NULL) {                                                          <* 
-    *>    yCALC_disp_pros (x_curr->ycalc, my.deps_list);                              <* 
-    *>    yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);                              <* 
-    *>    yCALC_disp_like (x_curr->ycalc, my.like_list);                              <* 
-    *>    yCALC_disp_copy (x_curr->ycalc, my.copy_list);                              <* 
-    *>    yCALC_disp_prosplus (x_curr->ycalc, my.pros_plus);                          <* 
-    *>    yCALC_disp_reqsplus (x_curr->ycalc, my.reqs_plus);                          <* 
+    *>    yCALC_disp_pros (x_curr->d_ycalc, my.deps_list);                              <* 
+    *>    yCALC_disp_reqs (x_curr->d_ycalc, my.reqs_list);                              <* 
+    *>    yCALC_disp_like (x_curr->d_ycalc, my.like_list);                              <* 
+    *>    yCALC_disp_copy (x_curr->d_ycalc, my.copy_list);                              <* 
+    *>    yCALC_disp_prosplus (x_curr->d_ycalc, my.pros_plus);                          <* 
+    *>    yCALC_disp_reqsplus (x_curr->d_ycalc, my.reqs_plus);                          <* 
     *> } else {                                                                       <* 
     *>    ystrlcpy (my.reqs_list, "n/a", LEN_RECD);                                    <* 
     *>    ystrlcpy (my.deps_list, "n/a", LEN_RECD);                                    <* 

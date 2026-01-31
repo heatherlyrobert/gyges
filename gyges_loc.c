@@ -2,6 +2,37 @@
 #include   "gyges.h"
 
 
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
 static char    s_label     [LEN_RECD]   = "";
 
 
@@ -103,7 +134,7 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
       return rce;
    }
    /*---(check unhooked)-----------------*/
-   --rce;  if (a_cell->tab != UNHOOKED || a_cell->col != UNHOOKED || a_cell->row != UNHOOKED) {
+   --rce;  if (a_cell->d_tab != UNHOOKED || a_cell->d_col != UNHOOKED || a_cell->d_row != UNHOOKED) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -152,15 +183,15 @@ LOC_hook           (tCELL *a_cell, char a_tab, short a_col, short a_row)
       return rce;
    }
    /*---(label and key)------------------*/
-   if (a_cell->label != g_tbd)  free (a_cell->label);
-   a_cell->label = strdup (x_label);
-   a_cell->key   = api_ysort_label2key (x_label);
-   DEBUG_LOCS   yLOG_complex ("DEBUG 4"   , "%-10.10s, %2dt, %3dc, %4dr", a_cell->label, a_cell->tab, a_cell->col, a_cell->row);
+   if (a_cell->d_label != g_tbd)  free (a_cell->d_label);
+   a_cell->d_label = strdup (x_label);
+   a_cell->d_key   = api_ysort_label2key (x_label);
+   DEBUG_LOCS   yLOG_complex ("DEBUG 4"   , "%-10.10s, %2dt, %3dc, %4dr", a_cell->d_label, a_cell->d_tab, a_cell->d_col, a_cell->d_row);
    rc = api_ysort_update ();
    DEBUG_LOCS   yLOG_value   ("ysort"     , rc);
    /*---(adjust tab)--------------------*/
    TAB_resize (a_tab, "");
-   /*> if (x_tab->type == G_TAB_AUTO) {                                               <* 
+   /*> if (x_tab->d_type == G_TAB_AUTO) {                                               <* 
     *>    rc = COL_max_adjust (a_tab);                                                <* 
     *>    DEBUG_LOCS   yLOG_value   ("COL max"   , rc);                               <* 
     *>    rc = ROW_max_adjust (a_tab);                                                <* 
@@ -191,13 +222,13 @@ LOC_unhook         (tCELL *a_cell)
       return rce;
    }
    /*---(defense: already unhooked)------*/
-   DEBUG_LOCS   yLOG_complex ("coord"     , "%2dt, %3dc, %4dr", a_cell->tab, a_cell->col, a_cell->row);
-   --rce;  if (a_cell->tab == UNHOOKED || a_cell->col == UNHOOKED || a_cell->row == UNHOOKED) {
+   DEBUG_LOCS   yLOG_complex ("coord"     , "%2dt, %3dc, %4dr", a_cell->d_tab, a_cell->d_col, a_cell->d_row);
+   --rce;  if (a_cell->d_tab == UNHOOKED || a_cell->d_col == UNHOOKED || a_cell->d_row == UNHOOKED) {
       DEBUG_LOCS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare)------------------------*/
-   x_tab = a_cell->tab;
+   x_tab = a_cell->d_tab;
    rc = TAB_unhook_cell (a_cell);
    DEBUG_LOCS   yLOG_value   ("TAB unhook", rc);
    --rce;  if (rc < 0) {
@@ -217,9 +248,9 @@ LOC_unhook         (tCELL *a_cell)
       return rce;
    }
    /*---(label and key)------------------*/
-   if (a_cell->label != g_tbd)  free (a_cell->label);
-   a_cell->label = g_tbd;
-   a_cell->key   = UNHOOKED;
+   if (a_cell->d_label != g_tbd)  free (a_cell->d_label);
+   a_cell->d_label = g_tbd;
+   a_cell->d_key   = UNHOOKED;
    api_ysort_update ();
    /*---(adjust tab)--------------------*/
    TAB_resize (x_tab, "");
@@ -492,9 +523,9 @@ LOC_label         (
    --rce;  if (a_final        == NULL) return rce;
    ystrlcpy (a_final, ""           , LEN_LABEL);
    --rce;  if (a_cell         == NULL) return rce;
-   --rce;  if (a_cell->label  == NULL) return rce;
+   --rce;  if (a_cell->d_label  == NULL) return rce;
    /*---(copy label)---------------------*/
-   ystrlcpy (a_final, a_cell->label, LEN_LABEL);
+   ystrlcpy (a_final, a_cell->d_label, LEN_LABEL);
    /*---(complete)-----------------------*/
    return  0;
 }
@@ -513,9 +544,9 @@ LOC_coords        (
    /*---(defense: valid cell)------------*/
    --rce;  if (a_cell  == NULL)             return rce;
    /*---(fiugure out reference)----------*/
-   if (a_tab != NULL)  *a_tab  = a_cell->tab;
-   if (a_col != NULL)  *a_col  = a_cell->col;
-   if (a_row != NULL)  *a_row  = a_cell->row;
+   if (a_tab != NULL)  *a_tab  = a_cell->d_tab;
+   if (a_col != NULL)  *a_col  = a_cell->d_col;
+   if (a_row != NULL)  *a_row  = a_cell->d_row;
    /*---(complete)-----------------------*/
    return  0;
 }
@@ -613,7 +644,7 @@ LOC__unit_OLD      (char *a_question, tCELL *a_cell)
    for (i = 0; i < NCEL; ++i) {
       if (x_curr == NULL)     break;
       if (x_curr == a_cell) { rc = 0; break; }
-      x_curr = x_curr->m_next;
+      x_curr = x_curr->d_next;
    }
    if (rc < 0)   x_curr = NULL;
    /*---(selection)----------------------*/
@@ -623,12 +654,12 @@ LOC__unit_OLD      (char *a_question, tCELL *a_cell)
       } else if (x_curr == NULL) {
          snprintf (unit_answer, LEN_FULL, "s_loc cell       : ptr=%9p, cell not found in list"   , a_cell);
       } else {
-         snprintf (unit_answer, LEN_FULL, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_FULL, "s_loc cell       : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->d_tab, x_curr->d_col, x_curr->d_row);
       }
    }
    else if (strcmp(a_question, "loc_who"       )  == 0) {
       if (a_cell != NULL) {
-         snprintf (unit_answer, LEN_FULL, "s_loc occupant   : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_FULL, "s_loc occupant   : ptr=%9p, tab=%4d, col=%4d, row=%4d", x_curr, x_curr->d_tab, x_curr->d_col, x_curr->d_row);
       } else {
          snprintf (unit_answer, LEN_FULL, "s_loc occupant   : ptr=%9p, no cell attached", a_cell);
       }
@@ -637,7 +668,7 @@ LOC__unit_OLD      (char *a_question, tCELL *a_cell)
       if (a_cell == NULL) {
 
       } else if (rc == 0) {
-         snprintf (unit_answer, LEN_FULL, "s_cell location  : tab=%4d, col=%4d, row=%4d", x_curr->tab, x_curr->col, x_curr->row);
+         snprintf (unit_answer, LEN_FULL, "s_cell location  : tab=%4d, col=%4d, row=%4d", x_curr->d_tab, x_curr->d_col, x_curr->d_row);
       } else {
          snprintf (unit_answer, LEN_FULL, "s_cell location  : not found in cell list");
       }

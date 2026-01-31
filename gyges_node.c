@@ -3,6 +3,37 @@
 
 
 
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
 static tTAB  *s_tab    = NULL;
 static char   s_type   = '-';
 static tNODE *s_curr   = NULL;
@@ -12,8 +43,8 @@ static tNODE *s_curr   = NULL;
 #define   IF_COL     if (a_type == 'c') 
 #define   ELSE_ROW   else 
 
-#define   IF_MATCH   if ((a_type == 'c' && x_curr->row == a_seq) || (a_type == 'r' && x_curr->col == a_seq)) 
-#define   IF_PAST    if ((a_type == 'c' && x_curr->row >  a_seq) || (a_type == 'r' && x_curr->col >  a_seq)) 
+#define   IF_MATCH   if ((a_type == 'c' && x_curr->d_row == a_seq) || (a_type == 'r' && x_curr->d_col == a_seq)) 
+#define   IF_PAST    if ((a_type == 'c' && x_curr->d_row >  a_seq) || (a_type == 'r' && x_curr->d_col >  a_seq)) 
 #define   IF_EMPTY   if (x_node->n_head == NULL && ((a_type == 'c' && x_node->size == DEF_WIDTH) || (a_type == 'r' && x_node->size == DEF_HEIGHT)))
 
 #define   IF_DEFAULT if ((a_type == 'c' && x_node->size == DEF_WIDTH) || (a_type == 'r' && x_node->size == DEF_HEIGHT))
@@ -473,8 +504,8 @@ NODE_hook_cell          (tTAB *a_tab, char a_type, ushort a_ref, ushort a_seq, t
    }
    /*---(update col ties)----------------*/
    ++(x_node->count);
-   IF_COL   a_cell->col      = a_ref;
-   ELSE_ROW a_cell->row      = a_ref;
+   IF_COL   a_cell->d_col    = a_ref;
+   ELSE_ROW a_cell->d_row    = a_ref;
    IF_COL   a_cell->C_parent = x_node;
    ELSE_ROW a_cell->R_parent = x_node;
    IF_COL   { DEBUG_LOCS   yLOG_complex ("C_parent"  , "%-10.10p, %c, %3dr, %3dc", a_cell->C_parent, a_cell->C_parent->type, a_cell->C_parent->ref, a_cell->C_parent->count); }
@@ -529,8 +560,8 @@ NODE_unhook_cell        (char a_type, tCELL *a_cell)
    --(x_node->count);
    DEBUG_LOCS   yLOG_sint    (x_node->count);
    /*---(update col ties)----------------*/
-   IF_COL   a_cell->col      = UNHOOKED;
-   ELSE_ROW a_cell->row      = UNHOOKED;
+   IF_COL   a_cell->d_col    = UNHOOKED;
+   ELSE_ROW a_cell->d_row    = UNHOOKED;
    IF_COL   a_cell->C_parent = NULL;
    ELSE_ROW a_cell->R_parent = NULL;
    /*---(check for freeing)--------------*/
@@ -789,13 +820,13 @@ NODE__printables         (char a_type, tNODE *a_node)
    DEBUG_LOCS   yLOG_value   ("count"     , a_node->count);
    x_cell = a_node->n_head;
    while (x_cell != NULL) {
-      if (x_cell->type == YCALC_DATA_MERGED) {
-         yCALC_merge_source (x_cell->ycalc, &x_owner);
+      if (x_cell->d_type == YCALC_DATA_MERGED) {
+         yCALC_merge_source (x_cell->d_ycalc, &x_owner);
          rc = api_ycalc_printer (x_owner);
       } else {
          rc = api_ycalc_printer (x_cell);
       }
-      DEBUG_LOCS   yLOG_complex ("x_cell"    , "%-10.10p, %-10.10s, %4d, %2då%sæ", x_cell, x_cell->label, rc, strlen (x_cell->print), x_cell->print);
+      DEBUG_LOCS   yLOG_complex ("x_cell"    , "%-10.10p, %-10.10s, %4d, %2då%sæ", x_cell, x_cell->d_label, rc, strlen (x_cell->d_print), x_cell->d_print);
       IF_COL   x_cell = x_cell->c_next;
       ELSE_ROW x_cell = x_cell->r_next;
    }
@@ -1382,9 +1413,9 @@ static void  o___MAPPER__________o () { return; }
  *>    /+---(mark used)----------------------+/                                                                                                             <* 
  *>    x_cell = a_node->n_head;                                                                                                                             <* 
  *>    while (rc == 0 && x_cell != NULL) {                                                                                                                  <* 
- *>       DEBUG_MAP    yLOG_info    ("cell"      , x_cell->label);                                                                                          <* 
- *>       IF_COL   n = x_cell->col;                                                                                                                         <* 
- *>       ELSE_ROW n = x_cell->row;                                                                                                                         <* 
+ *>       DEBUG_MAP    yLOG_info    ("cell"      , x_cell->d_label);                                                                                          <* 
+ *>       IF_COL   n = x_cell->d_col;                                                                                                                         <* 
+ *>       ELSE_ROW n = x_cell->d_row;                                                                                                                         <* 
  *>       a_map->used [n] = '+';                                                                                                                            <* 
  *>       IF_COL   x_cell = x_cell->r_next;                                                                                                                 <* 
  *>       ELSE_ROW x_cell = x_cell->c_next;                                                                                                                 <* 
@@ -1466,14 +1497,14 @@ static void  o___MAPPER__________o () { return; }
  *>    /+---(glmin)--------------------------+/                                                      <* 
  *>    DEBUG_MAP    yLOG_point   ("n_head"    , a_node->n_head);                                     <* 
  *>    if (a_node->n_head != NULL) {                                                                 <* 
- *>       IF_COL   a_map->glmin = a_node->n_head->col;                                               <* 
- *>       ELSE_ROW a_map->glmin = a_node->n_head->row;                                               <* 
+ *>       IF_COL   a_map->glmin = a_node->n_head->d_col;                                               <* 
+ *>       ELSE_ROW a_map->glmin = a_node->n_head->d_row;                                               <* 
  *>    }                                                                                             <* 
  *>    /+---(glmax)--------------------------+/                                                      <* 
  *>    DEBUG_MAP    yLOG_point   ("n_tail"    , a_node->n_tail);                                     <* 
  *>    if (a_node->n_tail != NULL) {                                                                 <* 
- *>       IF_COL   a_map->glmax = a_node->n_tail->col;                                               <* 
- *>       ELSE_ROW a_map->glmax = a_node->n_tail->row;                                               <* 
+ *>       IF_COL   a_map->glmax = a_node->n_tail->d_col;                                               <* 
+ *>       ELSE_ROW a_map->glmax = a_node->n_tail->d_row;                                               <* 
  *>    }                                                                                             <* 
  *>    /+---(complete)-----------------------+/                                                      <* 
  *>    DEBUG_MAP    yLOG_exit    (__FUNCTION__);                                                     <* 
@@ -1616,9 +1647,9 @@ NODE_map_update            (char a_type, char a_level)
    tNODE      *x_node      = NULL;
    ushort      x_wide      =    0;
    /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
-   DEBUG_MAP    yLOG_char    ("a_type"    , a_type);
-   DEBUG_MAP    yLOG_complex ("sizes"     , "%4dt, %4dc, %4dr", CTAB, NCOL, NROW);
+   DEBUG_YMAP    yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP    yLOG_char    ("a_type"    , a_type);
+   DEBUG_YMAP    yLOG_complex ("sizes"     , "%4dt, %4dc, %4dr", CTAB, NCOL, NROW);
    /*---(defense)------------------------*/
    --rce;  switch (a_type) {
    case 'c' :
@@ -1630,12 +1661,12 @@ NODE_map_update            (char a_type, char a_level)
       x_size = NROW;
       break;
    default  :
-      DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
       break;
    }
-   DEBUG_MAP    yLOG_char    ("x_axis"    , x_axis);
-   DEBUG_MAP    yLOG_value   ("x_size"    , x_size);
+   DEBUG_YMAP    yLOG_char    ("x_axis"    , x_axis);
+   DEBUG_YMAP    yLOG_value   ("x_size"    , x_size);
    /*---(preparation)--------------------*/
    rc = yMAP_clear  (x_axis);
    rc = yMAP_start  (x_axis, x_size);
@@ -1665,7 +1696,7 @@ NODE_map_update            (char a_type, char a_level)
    /*---(update)-------------------------*/
    rc = yMAP_finish ();
    /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP    yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -1680,21 +1711,21 @@ NODE_entry              (char a_type, ushort a_pos, short *r_ref, uchar *r_wide,
    tCELL      *x_curr      = NULL;
    ushort      x, y        =    0;
    /*---(header)-------------------------*/
-   DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP    yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_MAP    yLOG_value   ("a_pos"     , a_pos);
+   DEBUG_YMAP    yLOG_value   ("a_pos"     , a_pos);
    yMAP_current (NULL, NULL, &x, &y, NULL);
    IF_COL  {
-      DEBUG_MAP    yLOG_complex ("xaxis"     , "%3dc, %3dx", CCOL, x);
+      DEBUG_YMAP    yLOG_complex ("xaxis"     , "%3dc, %3dx", CCOL, x);
       x_max  = NCOL;
    }
    ELSE_ROW {
-      DEBUG_MAP    yLOG_complex ("yaxis"     , "%3dc, %3dx", CROW, y);
+      DEBUG_YMAP    yLOG_complex ("yaxis"     , "%3dc, %3dx", CROW, y);
       x_max  = NROW;
    }
-   DEBUG_MAP    yLOG_value   ("x_max"     , x_max);
+   DEBUG_YMAP    yLOG_value   ("x_max"     , x_max);
    --rce;  if (a_pos >= x_max)  {
-      DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(get wide)-----------------------*/
@@ -1710,7 +1741,7 @@ NODE_entry              (char a_type, ushort a_pos, short *r_ref, uchar *r_wide,
    if (r_wide != NULL)  *r_wide = x_wide;
    if (r_used != NULL)  *r_used = x_used;
    /*---(complete)-----------------------*/
-   DEBUG_MAP    yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP    yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1783,8 +1814,8 @@ NODE__unit         (char *a_question, uchar a_tab, char a_type, ushort a_ref)
             ELSE_ROW { x_curr = x_node->n_tail; while (x_curr != NULL) { ++x_back; x_curr = x_curr->r_prev; } }
             x_curr = x_node->n_head;
             while (x_curr != NULL) {
-               IF_COL   sprintf (s, "%d", x_curr->row);
-               ELSE_ROW sprintf (s, "%d", x_curr->col);
+               IF_COL   sprintf (s, "%d", x_curr->d_row);
+               ELSE_ROW sprintf (s, "%d", x_curr->d_col);
                if (x_curr != x_node->n_head)   ystrlcat (t, ",", LEN_HUND);
                ystrlcat (t, s, LEN_HUND);
                IF_COL   x_curr = x_curr->c_next;

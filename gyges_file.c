@@ -1,5 +1,36 @@
 /*============================----beg-of-source---============================*/
 
+
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
 /*===[[ DECISION :: FORMAT ]]=================================================*/
 
 /*   PROBLEM (pr)
@@ -397,15 +428,15 @@ EXIM__close             (void)
  *>          DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                             <* 
  *>          return 0;                                                                                                             <* 
  *>       }                                                                                                                        <* 
- *>       DEBUG_REGS   yLOG_value   ("v_num"     , x_curr->v_num);                                                                 <* 
- *>       if (x_curr->v_num <= 0) {                                                                                                <* 
+ *>       DEBUG_REGS   yLOG_value   ("d_num"     , x_curr->d_num);                                                                 <* 
+ *>       if (x_curr->d_num <= 0) {                                                                                                <* 
  *>          DEBUG_REGS   yLOG_note    ("end of mapping (zero or negative cell)");                                                 <* 
  *>          DEBUG_REGS   yLOG_exit    (__FUNCTION__);                                                                             <* 
  *>          return 0;                                                                                                             <* 
  *>       }                                                                                                                        <* 
  *>       s_mapper = 'y';                                                                                                          <* 
  *>       s_crow   = CROW + 1;                                                                                                     <* 
- *>       s_map [i] = x_curr->v_num;                                                                                               <* 
+ *>       s_map [i] = x_curr->d_num;                                                                                               <* 
  *>       DEBUG_REGS   yLOG_pair    (i          , s_map [i] );                                                                     <* 
  *>    }                                                                                                                           <* 
  *>    /+---(complete)-----------------------+/                                                                                    <* 
@@ -1515,28 +1546,28 @@ EXIM__write_one         (FILE *f, char a_style, char a_tab, short a_col, short a
       return 0;
    }
    /*---(write filled cells)-------------*/
-   DEBUG_OUTP   yLOG_info    ("cell"      , x_curr->label);
+   DEBUG_OUTP   yLOG_info    ("cell"      , x_curr->d_label);
    /*---(get source)---------------------*/
-   if (x_curr->source != NULL) {
+   if (x_curr->d_source != NULL) {
       DEBUG_OUTP   yLOG_note    ("convert source string");
-      ystrlcpy    (x_source, x_curr->source, LEN_RECD);
+      ystrlcpy    (x_source, x_curr->d_source, LEN_RECD);
       ystrldecode (x_source, LEN_RECD);
    } else {
       DEBUG_OUTP   yLOG_note    ("source is NULL");
    }
    DEBUG_OUTP   yLOG_info    ("source"    , x_source);
    /*---(get modded)---------------------*/
-   if (strchr (YCALC_GROUP_NUM, x_curr->type) != NULL) {
-      sprintf (x_modded, "%lf", x_curr->v_num);
+   if (strchr (YCALC_GROUP_NUM, x_curr->d_type) != NULL) {
+      sprintf (x_modded, "%lf", x_curr->d_num);
    } else {
-      if (x_curr->v_str != NULL)   ystrlcpy (x_modded, x_curr->v_str , LEN_RECD);
-      else                         ystrlcpy (x_modded, x_curr->source, LEN_RECD);
+      if (x_curr->d_str != NULL)   ystrlcpy (x_modded, x_curr->d_str , LEN_RECD);
+      else                         ystrlcpy (x_modded, x_curr->d_source, LEN_RECD);
    }
    ystrldecode    (x_modded, LEN_RECD);
    /*---(get printable)------------------*/
-   if (x_curr->print != NULL) {
+   if (x_curr->d_print != NULL) {
       DEBUG_OUTP   yLOG_note    ("convert printable");
-      ystrlcpy    (x_print, x_curr->print, LEN_RECD);
+      ystrlcpy    (x_print, x_curr->d_print, LEN_RECD);
       ystrldecode (x_print, LEN_RECD);
       ystrlcpy    (x_trim , x_print  , LEN_RECD);
       ystrltrim   (x_trim , ySTR_BOTH, LEN_RECD);
@@ -1578,9 +1609,9 @@ EXIM__write_one         (FILE *f, char a_style, char a_tab, short a_col, short a
       fprintf (f, "%s··"    , x_source);
       break;
    case 'n' : case 'N' :
-      ystrlpad (x_curr->label, x_label, '.', '<', 11);
+      ystrlpad (x_curr->d_label, x_label, '.', '<', 11);
       fprintf (f, "cell··········%-10.10s··"  , x_label);
-      fprintf (f, "%c%c%c%c%c··"      , x_curr->align, x_curr->format, x_curr->decs, x_curr->unit, x_curr->five);
+      fprintf (f, "%c%c%c%c%c%c%c··"      , x_curr->d_align, x_curr->d_format, x_curr->d_decs, x_curr->d_unit, x_curr->d_fill, x_curr->d_zero);
       fprintf (f, "%s·\n"   , x_source);
       break;
    }

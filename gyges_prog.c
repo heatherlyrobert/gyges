@@ -1,6 +1,36 @@
 /*============================----beg-of-source---============================*/
-
 #include   "gyges.h"
+
+
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
 
 char          unit_answer [LEN_FULL];
 
@@ -627,9 +657,9 @@ static void  o___UNITTEST________o () { return; }
  *>    } else if (strcmp(a_question, "cell_list")      == 0) {                                                                                                                                                                  <* 
  *>       snprintf(unit_answer, LEN_FULL, "Cell Linked List : n=%4d, h=%9p, t=%9p", ncell, hcell, tcell);                                                                                                                       <* 
  *>    } else if (strcmp(a_question, "cell_count")     == 0) {                                                                                                                                                                  <* 
- *>       /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/                                               <* 
- *>       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->m_next; }                                                                                                                                         <* 
- *>       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->m_prev; }                                                                                                                                         <* 
+ *>       /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->d_next; }   <+/                                               <* 
+ *>       x_curr = hcell; while (x_curr != NULL) { ++x_fore; x_curr = x_curr->d_next; }                                                                                                                                         <* 
+ *>       x_curr = tcell; while (x_curr != NULL) { ++x_back; x_curr = x_curr->d_prev; }                                                                                                                                         <* 
  *>       snprintf(unit_answer, LEN_FULL, "Cell Links Count : n=%4d, f=%4d, b=%4d", ncell, x_fore, x_back);                                                                                                                     <* 
  *>    } else if (strcmp(a_question, "mode")           == 0) {                                                                                                                                                                  <* 
  *>       /+> snprintf(unit_answer, LEN_FULL, "Mode             : %c", yVIKEYS_mode_curr ());   <+/                                                                                                                             <* 
@@ -641,15 +671,15 @@ static void  o___UNITTEST________o () { return; }
  *>    } else if (strcmp(a_question, "sheet_who")      == 0) {                                                                                                                                                                  <* 
  *>       snprintf(unit_answer, LEN_FULL, "Sheet Location   : p=%9p", x_curr);                                                                                                                                                  <* 
  *>    } else if (strcmp(a_question, "cell_info")      == 0) {                                                                                                                                                                  <* 
- *>       /+> snprintf(unit_answer, LEN_FULL, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->type, x_curr->format, x_curr->decs, x_curr->align, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <+/   <* 
+ *>       /+> snprintf(unit_answer, LEN_FULL, "Cell Information : t=%c f=%c d=%c a=%c c=%3d r=%3d d=%3d", x_curr->d_type, x_curr->format, x_curr->decs, x_curr->align, x_curr->nrpn, x_curr->nrequire, x_curr->nprovide);   <+/   <* 
  *>    }                                                                                                                                                                                                                        <* 
  *>    /+---(cell contents)------------------+/                                                                                                                                                                                 <* 
  *>    else if   (strcmp(a_question, "cell_source")    == 0) {                                                                                                                                                                  <* 
- *>       snprintf(unit_answer, LEN_FULL, "Cell Source      : (%5d) :%-.40s:", x_curr->len, x_curr->source);                                                                                                                    <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Source      : (%5d) :%-.40s:", x_curr->d_len, x_curr->d_source);                                                                                                                    <* 
  *>    } else if (strcmp(a_question, "cell_value")     == 0) {                                                                                                                                                                  <* 
- *>       snprintf(unit_answer, LEN_FULL, "Cell Value       : %18.6F", x_curr->v_num);                                                                                                                                          <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Value       : %18.6F", x_curr->d_num);                                                                                                                                          <* 
  *>    } else if (strcmp(a_question, "cell_modified")  == 0) {                                                                                                                                                                  <* 
- *>       snprintf(unit_answer, LEN_FULL, "Cell Modified    : (%4d) %-.40s", (int) strlen(x_curr->v_str), x_curr->v_str);                                                                                                       <* 
+ *>       snprintf(unit_answer, LEN_FULL, "Cell Modified    : (%4d) %-.40s", (int) strlen(x_curr->d_str), x_curr->d_str);                                                                                                       <* 
  *>    } else if (strcmp(a_question, "cell_printable") == 0) {                                                                                                                                                                  <* 
  *>       /+> snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%-.40s:", (int) strlen(x_curr->print), x_curr->print);   <+/                                                                                           <* 
  *>       snprintf(unit_answer, LEN_FULL, "Cell Printable   : (%4d) :%s:", (int) strlen(x_curr->print), x_curr->print);                                                                                                         <* 
@@ -682,7 +712,7 @@ static void  o___UNITTEST________o () { return; }
  *>    /+> else if (strcmp(a_question, "deps_list")        == 0) {                                                                                                                    <*                                        <* 
  *>     *>    snprintf(unit_answer, LEN_FULL, "Deps Linked List : n=%4d, h=%9p, t=%9p", s_ndep, s_hdep, s_tdep);                                                                          <*                                    <* 
 *>     *> } else if (strcmp(a_question, "deps_count")     == 0) {                                                                                                                    <*                                        <* 
-   *>     *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->m_next; }   <+/   <*                                      <* 
+   *>     *>    /+> x_curr = hcell; while (x_curr != NULL) { printf("%2d) c=%4d, r=%4d, p=%9p\n", x_fore, x_curr->col, x_curr->row, x_curr); ++x_fore; x_curr = x_curr->d_next; }   <+/   <*                                      <* 
       *>     *>    x_deps = s_hdep; while (x_deps != NULL) { ++x_fore; x_deps = x_deps->dnext; }                                                                                            <*                                       <* 
       *>     *>    x_deps = s_tdep; while (x_deps != NULL) { ++x_back; x_deps = x_deps->dprev; }                                                                                            <*                                       <* 
       *>     *>    snprintf(unit_answer, LEN_FULL, "Deps Links Count : n=%4d, f=%4d, b=%4d", s_ndep, x_fore, x_back);                                                                        <*                                      <* 

@@ -1,6 +1,37 @@
 /*============================----beg-of-source---============================*/
 #include   "gyges.h"
 
+
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
 /*
  * metis § wn2#· § col width changes not updating effected merged cell printables         § M2O126 §  1 §
  * metis § dn4#· § cut and paste is disabled                                              § M2O1DD §  2 §
@@ -332,16 +363,16 @@ api_yvikeys_searcher      (char a_scope)
    x_next = hcell;
    /*---(process range)----------------------*/
    while (x_next != NULL) {
-      if (!x_live || yMAP_visual (x_next->tab, x_next->col, x_next->row, 0)) {
-         if (x_next->source != NULL && x_next->tab <= 36) {
-            x_next->note = '-';
-            DEBUG_YMARK   yLOG_complex ("x_next"    , "tab %2d, col %3d, row %4d, %c, %s", x_next->tab, x_next->col, x_next->row, x_next->type, x_next->source);
-            rc = yMARK_check (x_next->label, x_next->tab, x_next->col, x_next->row, 0, x_next->type, x_next->source, x_next->v_str, x_next->v_num, x_next->print);
+      if (!x_live || yMAP_visual (x_next->d_tab, x_next->d_col, x_next->d_row, 0)) {
+         if (x_next->d_source != NULL && x_next->d_tab <= 36) {
+            x_next->d_note = '-';
+            DEBUG_YMARK   yLOG_complex ("x_next"    , "tab %2d, col %3d, row %4d, %c, %s", x_next->d_tab, x_next->d_col, x_next->d_row, x_next->d_type, x_next->d_source);
+            rc = yMARK_check (x_next->d_label, x_next->d_tab, x_next->d_col, x_next->d_row, 0, x_next->d_type, x_next->d_source, x_next->d_str, x_next->d_num, x_next->d_print);
             DEBUG_YMARK   yLOG_value   ("check"     , rc);
-            if (rc > 0)       x_next->note = 's';
+            if (rc > 0)       x_next->d_note = 's';
          }
       }
-      x_next = x_next->m_next;
+      x_next = x_next->d_next;
    }
    /*---(complete)---------------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
@@ -366,18 +397,18 @@ api_yvikeys_searcher_OLD  (char a_scope)
    } else  x_next = hcell;
    /*---(process range)----------------------*/
    do {
-      if (x_next != NULL && x_next->source != NULL && x_next->tab <= 36) {
-         x_next->note = '-';
-         DEBUG_YMARK   yLOG_complex ("x_next"    , "tab %2d, col %3d, row %4d, %c, %s", x_next->tab, x_next->col, x_next->row, x_next->type, x_next->source);
-         rc = yMARK_check (x_next->label, x_next->tab, x_next->col, x_next->row, 0, x_next->type, x_next->source, x_next->v_str, x_next->v_num, x_next->print);
+      if (x_next != NULL && x_next->d_source != NULL && x_next->d_tab <= 36) {
+         x_next->d_note = '-';
+         DEBUG_YMARK   yLOG_complex ("x_next"    , "tab %2d, col %3d, row %4d, %c, %s", x_next->d_tab, x_next->d_col, x_next->d_row, x_next->d_type, x_next->d_source);
+         rc = yMARK_check (x_next->d_label, x_next->d_tab, x_next->d_col, x_next->d_row, 0, x_next->d_type, x_next->d_source, x_next->d_str, x_next->d_num, x_next->d_print);
          DEBUG_YMARK   yLOG_value   ("check"     , rc);
-         if (rc > 0)       x_next->note = 's';
+         if (rc > 0)       x_next->d_note = 's';
       }
       if (x_live)  {
          rc = yMAP_visu_next  (&u, &x, &y, NULL);
          if (rc < 0)  x_next = DONE_DONE;
          else         x_next = LOC_cell_at_loc (u, x, y);
-      } else  x_next = x_next->m_next;
+      } else  x_next = x_next->d_next;
    } while (x_next != NULL && x_next != DONE_DONE);
    /*---(complete)---------------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
@@ -395,8 +426,8 @@ api_yvikeys_unsearcher   (uchar *a_label, ushort u, ushort x, ushort y, ushort z
    DEBUG_YMARK   yLOG_complex ("address"   , "%-10.10s, %2d, %3d, %4d", a_label, u, x, y);
    x_curr = LOC_cell_at_loc (u, x, y);
    DEBUG_YMARK   yLOG_point   ("x_curr"    , x_curr);
-   if (x_curr != NULL) x_curr->note = '-';
-   DEBUG_YMARK   yLOG_char    ("x_curr->n" , x_curr->note);
+   if (x_curr != NULL) x_curr->d_note = '-';
+   DEBUG_YMARK   yLOG_char    ("x_curr->n" , x_curr->d_note);
    /*---(complete)---------------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -877,7 +908,7 @@ MAP_mapper           (char a_req)
    x_curr = LOC_cell_at_curr ();
    if  (yMODE_curr () == UMOD_WANDER) {
       ;;
-   } else if (x_curr == NULL || x_curr->source == NULL) {
+   } else if (x_curr == NULL || x_curr->d_source == NULL) {
       DEBUG_YMAP    yLOG_complex ("CURRENT"   , "%4dt, %4dc, %4dr", CTAB, CCOL, CROW);
       ySRC_update (t, "·····", "");
       ystrlcpy (my.reqs_list, "n/a", LEN_RECD);
@@ -896,22 +927,22 @@ MAP_mapper           (char a_req)
       g_curr.decs   = '-';
       g_curr.unit   = '-';
    } else {
-      sprintf (t, "%c%c%c%c%c", x_curr->type, x_curr->align, x_curr->format, x_curr->decs, x_curr->unit);
-      ySRC_update (x_curr->label, t, x_curr->source);
-      yCALC_disp_reqs (x_curr->ycalc, my.reqs_list);
-      yCALC_disp_pros (x_curr->ycalc, my.deps_list);
-      yCALC_disp_like (x_curr->ycalc, my.like_list);
-      yCALC_disp_copy (x_curr->ycalc, my.copy_list);
-      ystrlcpy (g_curr.label, x_curr->label, LEN_LABEL);
-      g_curr.len    = x_curr->len;
-      g_curr.type   = x_curr->type;
-      g_curr.tab    = x_curr->tab;
-      g_curr.col    = x_curr->col;
-      g_curr.row    = x_curr->row;
-      g_curr.align  = x_curr->align;
-      g_curr.format = x_curr->format;
-      g_curr.decs   = x_curr->decs;
-      g_curr.unit   = x_curr->unit;
+      sprintf (t, "%c%c%c%c%c", x_curr->d_type, x_curr->d_align, x_curr->d_format, x_curr->d_decs, x_curr->d_unit);
+      ySRC_update (x_curr->d_label, t, x_curr->d_source);
+      yCALC_disp_reqs (x_curr->d_ycalc, my.reqs_list);
+      yCALC_disp_pros (x_curr->d_ycalc, my.deps_list);
+      yCALC_disp_like (x_curr->d_ycalc, my.like_list);
+      yCALC_disp_copy (x_curr->d_ycalc, my.copy_list);
+      ystrlcpy (g_curr.label, x_curr->d_label, LEN_LABEL);
+      g_curr.len    = x_curr->d_len;
+      g_curr.type   = x_curr->d_type;
+      g_curr.tab    = x_curr->d_tab;
+      g_curr.col    = x_curr->d_col;
+      g_curr.row    = x_curr->d_row;
+      g_curr.align  = x_curr->d_align;
+      g_curr.format = x_curr->d_format;
+      g_curr.decs   = x_curr->d_decs;
+      g_curr.unit   = x_curr->d_unit;
    }
    /*---(complete)-----------------------*/
    DEBUG_YMAP    yLOG_exit    (__FUNCTION__);

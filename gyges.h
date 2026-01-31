@@ -1,5 +1,38 @@
 /*===============================[[ beg code ]]===============================*/
 
+
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
 /*===[[ HEADER BEG ]]=========================================================*/
 /*                      ´·········1·········2·········3·········4·········5·········6·········7*/
 /*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
@@ -42,10 +75,10 @@
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   "2010-09"
 /*········· ··········· ´·····························´········································*/
-#define     P_VERMAJOR  "3.--, totally reworking to use yVIKEYS and yCALC"
-#define     P_VERMINOR  "3.7-, moved to post-yVIHUB libraries"
-#define     P_VERNUM    "3.7o"
-#define     P_VERTXT    "found hidden, detailed cell creation issues and fixed/tested"
+#define     P_VERMAJOR  "4.--, next revision in production"
+#define     P_VERMINOR  "4.0-, clean, simplify, and integrate code"
+#define     P_VERNUM    "4.0a"
+#define     P_VERTXT    "cleaned cell structure field naming and added gpl headers"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -77,6 +110,7 @@
  *  simulation
  *  virtual reality/immersive
  *
+ *  robotics/movement
  *
  */
 
@@ -565,35 +599,42 @@ extern int         nerror;  /* count */
  *
  *   actual data structure...
  *
+ *   d_  for data
+ *   c_  column
+ *   r_  row
+ *   t_  tab
+ *
  */
-struct cCELL {
+struct cCELL {  /*  prefix "d_" stands for data */
    /*---(location)-----------------------*/
-   char        tab;          /* which tab contains the cell                   */
-   short       col;          /* which column contains this cell               */
-   short       row;          /* which row contains this cell                  */
-   uchar      *label;        /* label of the cell at its current location     */
-   long        key;          /* label as a unique long (for sorting)          */
+   char        d_tab;        /* which tab contains the cell                   */
+   short       d_col;        /* which column contains this cell               */
+   short       d_row;        /* which row contains this cell                  */
+   uchar      *d_label;      /* label of the cell at its current location     */
+   long        d_key;        /* label as a unique long (for sorting)          */
    /*---(source)-------------------------*/
-   uchar      *source;       /* unmodified input string just as user typed    */
-   short       len;          /* length of input string                        */
+   uchar      *d_source;     /* unmodified input string just as user typed    */
+   short       d_len;        /* length of input string                        */
    /*---(result)-------------------------*/
-   uchar       type;         /* type of contents (program assigned)           */
-   double      v_num;        /* cell contents translated to a numeric value   */
-   uchar      *v_str;        /* cell contents translated to a string value    */
+   uchar       d_type;       /* type of contents (program assigned)           */
+   double      d_num;        /* cell contents translated to a numeric value   */
+   uchar      *d_str;        /* cell contents translated to a string value    */
    /*---(formatting)---------------------*/
-   uchar       align;        /* alignment code                                */
-   uchar       format;       /* formatting/filler style                       */
-   uchar       decs;         /* number of decimals to be shown                */
-   uchar       unit;         /* units for conversion                          */
-   uchar       five;         /* fifth characteristic (tbd)                    */
-   uchar      *print;        /* printable version of the cell                 */
-   uchar       note;         /* note for error, searching, etc                */
+   uchar       d_align;      /* alignment code                                */
+   uchar       d_format;     /* formatting/filler style                       */
+   uchar       d_decs;       /* number of decimals to be shown                */
+   uchar       d_unit;       /* units for conversion                          */
+   uchar       d_fill;       /* filler for empty spaces                       */
+   uchar       d_zero;       /* empty/zero replacement                        */
+   uchar      *d_print;      /* printable version of the cell                 */
+   uchar       d_note;       /* note for error and other messages             */
+   uchar       d_srch;       /* eight slots for searching results             */
    /*---(calculation)--------------------*/
-   void       *ycalc;        /* connection to yCALC library                   */
+   void       *d_ycalc;      /* connection to yCALC library                   */
    /*---(master list)--------------------*/
-   uchar       linked;       /* 1=linked, 0=unlinked                          */
-   tCELL      *m_prev;       /* previous cell in doubly linked list           */
-   tCELL      *m_next;       /* next cell in doubly linked list               */
+   uchar       d_linked;     /* 1=linked, 0=unlinked                          */
+   tCELL      *d_prev;       /* previous cell in doubly linked list           */
+   tCELL      *d_next;       /* next cell in doubly linked list               */
    /*---(btree)--------------------------*/
    tCELL      *b_left;       /* btree left branch                             */
    tCELL      *b_right;      /* btree right branch                            */

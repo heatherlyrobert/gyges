@@ -2,6 +2,37 @@
 #include   "gyges.h"
 
 
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
 /*
  *  cells are created once, updated sometimes, and calculated frequently
  *
@@ -104,19 +135,19 @@ api_ysort__cursor       (uchar a_type, void *a_head, void *a_tail, void *a_beg, 
    DEBUG_YSORT   yLOG_note    ("cast");
    if (a_beg != NULL) {
       x_beg    = (tCELL *) a_beg;
-      DEBUG_YSORT   yLOG_info    ("x_beg"     , x_beg->label);
+      DEBUG_YSORT   yLOG_info    ("x_beg"     , x_beg->d_label);
    }
    /*---(update)-------------------------*/
    DEBUG_YSORT   yLOG_char    ("a_action"  , a_action);
    switch (a_action) {
    case YDLST_HEAD : x_new = (tCELL *) a_head;                   break;
-   case YDLST_PREV : if (x_beg != NULL)  x_new = x_beg->m_prev;  break;
-   case YDLST_NEXT : if (x_beg != NULL)  x_new = x_beg->m_next;  break;
+   case YDLST_PREV : if (x_beg != NULL)  x_new = x_beg->d_prev;  break;
+   case YDLST_NEXT : if (x_beg != NULL)  x_new = x_beg->d_next;  break;
    case YDLST_TAIL : x_new = (tCELL *) a_tail;                   break;
    }
    /*---(save back)----------------------*/
    if (x_new != NULL) {
-      DEBUG_YSORT   yLOG_note    (x_new->label);
+      DEBUG_YSORT   yLOG_note    (x_new->d_label);
    }
    *a_new = x_new;
    /*---(complete)-----------------------*/
@@ -148,16 +179,16 @@ api_ysort__checker      (uchar a_type, uchar a_lvl, void *a_one, void *a_two, uc
    if (a_type == tolower (a_type)) {
       DEBUG_YSORT   yLOG_note    ("normal, sorting compare");
       x_two    = (tCELL *) a_two;
-      x_key    = x_two->key;
+      x_key    = x_two->d_key;
    } else {
       DEBUG_YSORT   yLOG_note    ("search compare to value");
       x_key = * ((long *) a_two);
    }
-   DEBUG_YSORT   yLOG_value   ("x_one->key", x_one->key);
+   DEBUG_YSORT   yLOG_value   ("x_one->d_key", x_one->d_key);
    DEBUG_YSORT   yLOG_value   ("x_key"     , x_key);
-   if      (x_one->key <  x_key)  rc = -1;
-   else if (x_one->key >  x_key)  rc =  1;
-   else if (x_one->key == x_key)  rc =  0;
+   if      (x_one->d_key <  x_key)  rc = -1;
+   else if (x_one->d_key >  x_key)  rc =  1;
+   else if (x_one->d_key == x_key)  rc =  0;
    DEBUG_YSORT   yLOG_value   ("compare"   , rc);
    /*---(complete)-----------------------*/
    DEBUG_YSORT   yLOG_exit    (__FUNCTION__);
@@ -188,14 +219,14 @@ api_ysort__unlinker     (uchar a_type, void **a_head, void **a_tail, void *a_two
    x_two    = (tCELL *) a_two;
    /*---(unlink current from list)-------*/
    DEBUG_YSORT   yLOG_note    ("unlink");
-   if (x_two->m_next != NULL)   x_two->m_next->m_prev = x_two->m_prev;
-   else                         x_tail                = x_two->m_prev;
-   if (x_two->m_prev != NULL)   x_two->m_prev->m_next = x_two->m_next;
-   else                         x_head                = x_two->m_next;
+   if (x_two->d_next != NULL)   x_two->d_next->d_prev = x_two->d_prev;
+   else                         x_tail                = x_two->d_prev;
+   if (x_two->d_prev != NULL)   x_two->d_prev->d_next = x_two->d_next;
+   else                         x_head                = x_two->d_next;
    /*---(ground pointers)----------------*/
    DEBUG_YSORT   yLOG_note    ("ground pointers");
-   x_two->m_next = NULL;
-   x_two->m_prev = NULL;
+   x_two->d_next = NULL;
+   x_two->d_prev = NULL;
    /*---(save back)----------------------*/
    DEBUG_YSORT   yLOG_note    ("save back");
    *a_head = x_head;
@@ -233,21 +264,21 @@ api_ysort__linker       (uchar a_type, void **a_head, void **a_tail, void *a_one
       if (x_head == NULL) {
          DEBUG_YSORT   yLOG_note    ("add first");
          x_head         = x_two;
-         x_two->m_prev  = NULL;
+         x_two->d_prev  = NULL;
       } else {
          DEBUG_YSORT   yLOG_note    ("append to tail");
-         x_tail->m_next = x_two;
-         x_two->m_prev  = x_tail;
+         x_tail->d_next = x_two;
+         x_two->d_prev  = x_tail;
       }
       x_tail       = x_two;
-      x_two->m_next    = NULL;
+      x_two->d_next    = NULL;
    } else {
       DEBUG_YSORT   yLOG_note    ("insert before");
-      if (x_one->m_prev != NULL)   x_one->m_prev->m_next = x_two;
+      if (x_one->d_prev != NULL)   x_one->d_prev->d_next = x_two;
       else                         x_head                = x_two;
-      x_two->m_prev   = x_one->m_prev;
-      x_two->m_next   = x_one;
-      x_one->m_prev   = x_two;
+      x_two->d_prev   = x_one->d_prev;
+      x_two->d_next   = x_one;
+      x_one->d_prev   = x_two;
    }
    /*---(save back)----------------------*/
    DEBUG_YSORT   yLOG_note    ("save back");
@@ -274,7 +305,7 @@ api_ysort__forker       (uchar a_type, void *a_node, void **a_left, void **a_rig
    /*---(prepare)------------------------*/
    x_curr   = (tCELL *) a_node;
    DEBUG_YSORT   yLOG_point   ("x_curr"    , x_curr);
-   DEBUG_YSORT   yLOG_info    ("label"     , x_curr->label);
+   DEBUG_YSORT   yLOG_info    ("label"     , x_curr->d_label);
    /*---(set)----------------------------*/
    if (a_type == tolower (a_type)) {
       DEBUG_YSORT   yLOG_note    ("saving run");
@@ -379,16 +410,16 @@ api_ysort_dumper        (uchar a_type, int a_lvl, tCELL *a_node, char *a_path, c
    int         x_len       =    0;
    if (a_node == NULL)  return 0;
    /*---(prefix and label)---------------*/
-   x_len = 10 - strlen (a_node->label);
-   fprintf (s_file, "%s%s%*.*s", a_pre, a_node->label, x_len, x_len, "··········");
+   x_len = 10 - strlen (a_node->d_label);
+   fprintf (s_file, "%s%s%*.*s", a_pre, a_node->d_label, x_len, x_len, "··········");
    /*---(spacer and suffix)--------------*/
    ystrlcpy (x_pre, "", LEN_RECD);
-   for (i = 15; i > a_lvl; --i)  strcat (x_pre, "···");
-   fprintf (s_file, "%s %2d %-20.20s %2dt, %3dc, %4dr, %20lld", x_pre, a_lvl, a_path, a_node->tab, a_node->col, a_node->row, a_node->key);
-   if      (a_node->key < 0)         fprintf (s_file, "   buffer/register");
-   else if (s_prev == a_node->key)   fprintf (s_file, "   DUP");
+      for (i = 15; i > a_lvl; --i)  strcat (x_pre, "···");
+      -printf (s_file, "%s %2d %-20.20s %2dt, %3dc, %4dr, %20lld", x_pre, a_lvl, a_path, a_node->d_tab, a_node->d_col, a_node->d_row, a_node->d_key);
+   if      (a_node->d_key < 0)         fprintf (s_file, "   buffer/register");
+   else if (s_prev == a_node->d_key)   fprintf (s_file, "   DUP");
    else                              fprintf (s_file, "   -");
-   s_prev = a_node->key;
+   s_prev = a_node->d_key;
    fprintf (s_file, "\n");
    return 0;
 }
@@ -502,8 +533,8 @@ api_ysort__unit         (char *a_question, int n)
       /*> ySORT_search_stats (&x_result, &x_last, &x_depth, x_path);                  <*/
       ySORT_search_stats (&x_result, &x_last   , &x_depth, x_path);
       /*> x_last = (tCELL *) x_void;                                                  <*/
-      if (x_last != NULL)  ystrlcpy (t, x_last->label, LEN_LABEL);
-      else                 ystrlcpy (t, "-"          , LEN_LABEL);
+      if (x_last != NULL)  ystrlcpy (t, x_last->d_label, LEN_LABEL);
+      else                 ystrlcpy (t, "-"            , LEN_LABEL);
       snprintf (unit_answer, LEN_FULL, "YSORT result     : %2d %-8.8s  %2d %s", x_result, t, x_depth, x_path);
    }
    /*---(complete)-----------------------*/

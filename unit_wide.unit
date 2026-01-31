@@ -4,59 +4,6 @@
 #   auto-generated script file converted from a previous script version
 #   updated to the most recent version (v21)
 
-#>  data structure waves è to ì
-
-
-
-#23456789-12  123  123456789-123456789-123456789-12345  123456789-123456789-123456  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  -  123456789-123456789- 
-#==(verb)===  ver  ===========(description)===========  =====(function)===========  ========================(arguments)=================================================================  ==(test)==  ==========================(results)=================================================================  t  ========(var)======= 
-PREP          v21  include the prototype headers                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-   incl       v21  include public header                gyges.h                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-
-
-#==(verb)===  ===========(description)===========  =====(function)=====  ========================(arguments)===================================  ==(test)==  ==========================(results)===================================  t  ========(var)======= 
-#GLOBAL        layering of testing to coordinate sequence                   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-   WAVE       primary/independent data structures (è)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     stage    (1) simple validators and checkers                                                                                                                                                                                           
-     stage    (2) data structure builders and destroyers                                                                                                                                                                                   
-     stage    (3) data structure verifiers and defenses                                                                                                                                                                                    
-     stage    (4) data structure mass updates, sorts, and cleansings                                                                                                                                                                       
-     stage    (5) data structure sequence-based index and cursor access                                                                                                                                                                    
-     stage    (6) data structure content update and manipulation                                                                                                                                                                           
-     stage    (7) data structure content-based actions                                                                                                                                                                                     
-     stage    (8) data structure reading and writing                                                                                                                                                                                       
-     stage    (9) data structure mapping and advanced processing                                                                                                                                                                           
-
-   WAVE       secondary/dependent data structures (é)                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     stage    (1) simple validators and checkers                                                                                                                                                                                           
-     stage    (2) data structure builders and destroyers                                                                                                                                                                                   
-     stage    (3) data structure verifiers and defenses                                                                                                                                                                                    
-     stage    (4) data structure mass updates, sorts, and cleansings                                                                                                                                                                       
-     stage    (5) data structure sequence-based index and cursor access                                                                                                                                                                    
-     stage    (6) data structure content update and cross-linking                                                                                                                                                                          
-     stage    (7) data structure content-based actions                                                                                                                                                                                     
-     stage    (8) data structure reading and writing                                                                                                                                                                                       
-     stage    (9) data structure mapping and advanced processing                                                                                                                                                                           
-
-   WAVE       terciary/interdependent data structures (ê)                  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     stage    (1) simple validators and checkers                                                                                                                                                                                           
-     stage    (2) data structure builders and destroyers                                                                                                                                                                                   
-     stage    (3) data structure verifiers and defenses                                                                                                                                                                                    
-     stage    (4) data structure mass updates, sorts, and cleansings                                                                                                                                                                       
-     stage    (5) data structure sequence-based index and cursor access                                                                                                                                                                    
-     stage    (6) data structure content update and cross-linking                                                                                                                                                                          
-     stage    (7) data structure content-based actions                                                                                                                                                                                     
-     stage    (8) data structure reading and writing                                                                                                                                                                                       
-     stage    (9) data structure mapping and advanced processing                                                                                                                                                                           
-
-   WAVE       full application (ë)                                         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((26.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     stage    (1) data reading and writing                                 primary inputs, outputs, and master files                                                                                                                       
-     stage    (2) data reporting and dumping                               creation of formatted data for review and debugging                                                                                                             
-     stage    (3) screen presentation                                      formatting of data to display in various screen elements                                                                                                        
-     stage    (4) edge, corner, and unicorn testing                        integration across data structures                                                                                                                              
-
 
 
 
