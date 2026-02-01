@@ -681,9 +681,14 @@ api_ycalc_printer       (void *a_owner)
    }
    /*---(contents)-----------------------*/
    DEBUG_YCALC   yLOG_char    ("type"      , x_owner->d_type);
+   DEBUG_YCALC   yLOG_char    ("align"     , x_owner->d_algn);
+   DEBUG_YCALC   yLOG_char    ("format"    , x_owner->d_form);
    DEBUG_YCALC   yLOG_char    ("decs"      , x_owner->d_decs);
-   DEBUG_YCALC   yLOG_char    ("format"    , x_owner->d_format);
-   DEBUG_YCALC   yLOG_char    ("align"     , x_owner->d_align);
+   DEBUG_YCALC   yLOG_char    ("decs"      , x_owner->d_unit);
+   DEBUG_YCALC   yLOG_char    ("unit"      , x_owner->d_unit);
+   DEBUG_YCALC   yLOG_char    ("fill"      , x_owner->d_fill);
+   DEBUG_YCALC   yLOG_char    ("zero"      , x_owner->d_zero);
+   DEBUG_YCALC   yLOG_char    ("sigs"      , x_owner->d_sigs);
    /*---(reset printing errors)----------*/
    if (x_owner->d_type == YCALC_DATA_ERROR && x_owner->d_print != NULL && strncmp (x_owner->d_print, "#p/", 3) == 0) {
       DEBUG_YCALC   yLOG_note    ("found an error");
@@ -703,37 +708,37 @@ api_ycalc_printer       (void *a_owner)
       DEBUG_YCALC   yLOG_note    ("number-type");
       DEBUG_YCALC   yLOG_value   ("value"     , x_owner->d_num);
       x_value = x_owner->d_num;
-      rc = ystrl4main (x_value, s, x_owner->d_decs - '0', x_owner->d_format, x_owner->d_unit, LEN_RECD);
+      rc = ystrl4main (x_value, s, x_owner->d_decs - '0', x_owner->d_form, x_owner->d_unit, LEN_RECD);
       DEBUG_YCALC   yLOG_value   ("strl4main" , rc);
       DEBUG_YCALC   yLOG_info    ("string"    , s);
       if      (rc < 0)                  strcpy (t, s);
-      else if (x_owner->d_align == '?')   rc = ystrlpad (s, t, '!', '>', w - 1);
-      else                              rc = ystrlpad (s, t, '!', x_owner->d_align, w - 1);
+      else if (x_owner->d_algn == '?')  rc = ystrlpad (s, t, x_owner->d_fill, '>'            , w - 1);
+      else                              rc = ystrlpad (s, t, x_owner->d_fill, x_owner->d_algn, w - 1);
    } else if (x_owner->d_type == (uchar) YCALC_DATA_VAR) {
       DEBUG_YCALC   yLOG_note    ("variable-type");
       ystrlcpy (s, x_owner->d_source, LEN_RECD);
       DEBUG_YCALC   yLOG_info    ("variable"  , s);
-      rc = ystrlpad (s, t, '?', x_owner->d_align, w - 1);
+      rc = ystrlpad (s, t, '?', x_owner->d_algn, w - 1);
    } else if (strchr (YCALC_GROUP_STR, x_owner->d_type) != NULL) {
       DEBUG_YCALC   yLOG_note    ("string-type");
       if (x_owner->d_str != NULL)  ystrlcpy (s, x_owner->d_str , LEN_RECD);
       else                         ystrlcpy (s, x_owner->d_source, LEN_RECD);
       DEBUG_YCALC   yLOG_info    ("string"    , s);
-      if (x_owner->d_align == '?')  rc = ystrlpad (s, t, x_owner->d_format, '<'       , w - 1);
-      else                        rc = ystrlpad (s, t, x_owner->d_format, x_owner->d_align, w - 1);
+      if (x_owner->d_algn == '?')  rc = ystrlpad (s, t, x_owner->d_fill, '<'            , w - 1);
+      else                         rc = ystrlpad (s, t, x_owner->d_fill, x_owner->d_algn, w - 1);
    } else if (x_owner->d_type == YCALC_DATA_CADDR || x_owner->d_type == YCALC_DATA_RLIKE) {
       DEBUG_YCALC   yLOG_note    ("calc-address-type");
       strcpy (s, "!");
       if (x_owner->d_str != NULL)  ystrlcat (s, x_owner->d_str, LEN_RECD);
       else                         ystrlcat (s, "???"        , LEN_RECD);
       DEBUG_YCALC   yLOG_info    ("string"    , s);
-      if (x_owner->d_align == '?')  rc = ystrlpad (s, t, x_owner->d_format, '<'       , w - 1);
-      else                        rc = ystrlpad (s, t, x_owner->d_format, x_owner->d_align, w - 1);
+      if (x_owner->d_algn == '?')  rc = ystrlpad (s, t, x_owner->d_fill, '<'       , w - 1);
+      else                         rc = ystrlpad (s, t, x_owner->d_fill, x_owner->d_algn, w - 1);
    } else if (strchr (YCALC_GROUP_POINT, x_owner->d_type) != NULL) {
       DEBUG_YCALC   yLOG_note    ("pointer-type");
       ystrlcpy (s, x_owner->d_source, LEN_RECD);
       DEBUG_YCALC   yLOG_info    ("pointer"   , s);
-      rc = ystrlpad (s, t, x_owner->d_format, x_owner->d_align, w - 1);
+      rc = ystrlpad (s, t, x_owner->d_fill, x_owner->d_algn, w - 1);
    } else if (YCALC_DATA_ERROR == x_owner->d_type) {
       DEBUG_YCALC   yLOG_note    ("error-type");
       if (x_owner->d_str != NULL)  ystrlcpy (s, x_owner->d_str, LEN_RECD);
@@ -749,7 +754,7 @@ api_ycalc_printer       (void *a_owner)
       DEBUG_YCALC   yLOG_note    ("internal-type");
       ystrlcpy (s, x_owner->d_source, LEN_RECD);
       DEBUG_YCALC   yLOG_info    ("range"     , s);
-      rc = ystrlpad (s, t, x_owner->d_format, x_owner->d_align, w - 1);
+      rc = ystrlpad (s, t, x_owner->d_fill, x_owner->d_algn, w - 1);
    } else {
       DEBUG_YCALC   yLOG_note    ("non-printing type");
       DEBUG_YCALC   yLOG_exit    (__FUNCTION__);

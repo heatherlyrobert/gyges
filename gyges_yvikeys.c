@@ -927,7 +927,7 @@ MAP_mapper           (char a_req)
       g_curr.h_decs   = '-';
       g_curr.h_unit   = '-';
    } else {
-      sprintf (t, "%c%c%c%c%c", x_curr->d_type, x_curr->d_align, x_curr->d_format, x_curr->d_decs, x_curr->d_unit);
+      sprintf (t, "%c%c%c%c%c", x_curr->d_type, x_curr->d_algn, x_curr->d_form, x_curr->d_decs, x_curr->d_unit);
       ySRC_update (x_curr->d_label, t, x_curr->d_source);
       yCALC_disp_reqs (x_curr->d_ycalc, g_curr.h_reqs_list);
       yCALC_disp_pros (x_curr->d_ycalc, g_curr.h_deps_list);
@@ -939,8 +939,8 @@ MAP_mapper           (char a_req)
       g_curr.h_tab    = x_curr->d_tab;
       g_curr.h_col    = x_curr->d_col;
       g_curr.h_row    = x_curr->d_row;
-      g_curr.h_align  = x_curr->d_align;
-      g_curr.h_format = x_curr->d_format;
+      g_curr.h_align  = x_curr->d_algn;
+      g_curr.h_format = x_curr->d_form;
       g_curr.h_decs   = x_curr->d_decs;
       g_curr.h_unit   = x_curr->d_unit;
    }

@@ -379,7 +379,7 @@ api_ymap_done           (void)
       return 0;
    }
    /*---(active cell)--------------------*/
-   sprintf (t, "%c%c%c%c%c", x_curr->d_type, x_curr->d_align, x_curr->d_format, x_curr->d_decs, x_curr->d_unit);
+   sprintf (t, "%c%c%c%c%c", x_curr->d_type, x_curr->d_algn, x_curr->d_form, x_curr->d_decs, x_curr->d_unit);
    ySRC_update (x_curr->d_label, t, x_curr->d_source);
    yCALC_disp_reqs (x_curr->d_ycalc, g_curr.h_reqs_list);
    yCALC_disp_pros (x_curr->d_ycalc, g_curr.h_deps_list);
@@ -393,8 +393,8 @@ api_ymap_done           (void)
    g_curr.h_tab    = x_curr->d_tab;
    g_curr.h_col    = x_curr->d_col;
    g_curr.h_row    = x_curr->d_row;
-   g_curr.h_align  = x_curr->d_align;
-   g_curr.h_format = x_curr->d_format;
+   g_curr.h_align  = x_curr->d_algn;
+   g_curr.h_format = x_curr->d_form;
    g_curr.h_decs   = x_curr->d_decs;
    g_curr.h_unit   = x_curr->d_unit;
    /*---(complete)-----------------------*/
@@ -498,6 +498,15 @@ api_ymap_mundo          (char a_dir, char a_act, char *a_label, char *a_format, 
    case YMAP_UNITS    :
       CELL_units    (x_curr, a_content [0]);
       break;
+   case YMAP_FILLIN   :
+      CELL_fillin   (x_curr, a_content [0]);
+      break;
+   case YMAP_ZEROS    :
+      CELL_zeros    (x_curr, a_content [0]);
+      break;
+   case YMAP_SIGS     :
+      CELL_sigs     (x_curr, a_content [0]);
+      break;
    case YMAP_SYNC     : case 'ù' :
       if (a_dir == '<') {
          DEBUG_YMAP  yLOG_note    ("running a sync with undo");
@@ -597,6 +606,15 @@ api_ymap_formatter      (uchar a_type, uchar a_abbr, ushort u, ushort x, ushort 
    case YMAP_UNITS    :
       DEBUG_YMAP  yLOG_note    ("units handler");
       x_prev = CELL_units    (x_curr, a_abbr);
+      break;
+   case YMAP_FILLIN   :
+      x_prev = CELL_fillin   (x_curr, a_abbr);
+      break;
+   case YMAP_ZEROS    :
+      x_prev = CELL_zeros    (x_curr, a_abbr);
+      break;
+   case YMAP_SIGS     :
+      x_prev = CELL_sigs     (x_curr, a_abbr);
       break;
    }
    /*---(complete)-----------------------*/
@@ -1015,7 +1033,7 @@ api_ymap_paster         (char a_reqs, char a_1st, short uo, short xo, short yo, 
       strcpy (x_source, a_cell->d_source);
    }
    DEBUG_YMAP   yLOG_info    ("x_source"  , x_source);
-   sprintf (x_bformat, "%c%c%c%c-", a_cell->d_align, a_cell->d_format, a_cell->d_decs, a_cell->d_unit);
+   sprintf (x_bformat, "%c%c%c%c-", a_cell->d_algn, a_cell->d_form, a_cell->d_decs, a_cell->d_unit);
    DEBUG_YMAP   yLOG_info    ("x_bformat" , x_bformat);
    if (a_1st == 'y')  x_copy = CELL_overwrite (YMAP_BEG, x_dtab, x_dcol, x_drow, x_source, x_bformat);
    else               x_copy = CELL_overwrite (YMAP_ADD, x_dtab, x_dcol, x_drow, x_source, x_bformat);

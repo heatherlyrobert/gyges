@@ -77,8 +77,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "4.--, next revision in production"
 #define     P_VERMINOR  "4.0-, clean, simplify, and integrate code"
-#define     P_VERNUM    "4.0c"
-#define     P_VERTXT    "all structures (except my) updated to prefix element naming (easier mtce)"
+#define     P_VERNUM    "4.0d"
+#define     P_VERTXT    "added new formatting handling and successfully unit-tested cell 01-05"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -611,15 +611,17 @@ struct cCELL {  /*  prefix "d_" stands for data */
    double      d_num;        /* cell contents translated to a numeric value   */
    uchar      *d_str;        /* cell contents translated to a string value    */
    /*---(formatting)---------------------*/
-   uchar       d_align;      /* alignment code                                */
-   uchar       d_format;     /* formatting/filler style                       */
+   uchar       d_algn;       /* alignment code                                */
+   uchar       d_form;       /* formatting/filler style                       */
    uchar       d_decs;       /* number of decimals to be shown                */
    uchar       d_unit;       /* units for conversion                          */
    uchar       d_fill;       /* filler for empty spaces                       */
    uchar       d_zero;       /* empty/zero replacement                        */
+   uchar       d_sigs;       /* significant digits                            */
    uchar      *d_print;      /* printable version of the cell                 */
+   /*---(marking)------------------------*/
    uchar       d_note;       /* note for error and other messages             */
-   uchar       d_srch;       /* eight slots for searching results             */
+   uchar       d_search;     /* eight slots for searching results             */
    /*---(calculation)--------------------*/
    void       *d_ycalc;      /* connection to yCALC library                   */
    /*---(master list)--------------------*/
@@ -1386,21 +1388,6 @@ char     *DEP_unit           (char *a_question, char *a_label);
 
 
 
-/*345678901-12345678901234567890->--------------------------------------------*/
-/*---(merge-specific)-----------------*/
-char        CELL__merge_valid    (tCELL *a_curr);
-tCELL*      CELL__merge_left     (tCELL *a_curr);
-char        CELL__merge_right    (tCELL *a_left);
-char        CELL__unmerge_right  (tCELL *a_left);
-char        CELL_merge           (tCELL *a_curr);
-char        CELL_unmerge         (tCELL *a_curr);
-/*---(unit-testing)-------------------*/
-char        CELL__unitchange     (tCELL *a_cell, char *a_source);
-
-
-
-
-
 
 
 
@@ -1646,7 +1633,6 @@ char*       LOC__unit_OLD        /* petal  2----- */  (char *a_question, tCELL *
 
 
 
-char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 
 
 
@@ -1657,72 +1643,6 @@ char      CELL__wipe         /* ------ */  (tCELL *a_cell);
 
 
 
-/*---(basics)----------------------------*/
-char        CELL__valid          /* ------ */  (tCELL  *a_cell, char a_linked);
-/*345678901-12345678901234567890->--------------------------------------------*/
-/*---(memory)----------------------------*/
-char        CELL__new_driver     (char a_root, tCELL **a_cell, char a_linked);
-char        CELL__new            (tCELL **a_cell, char a_linked);
-char        CELL__new_root       (tCELL **a_cell);
-char        CELL__free_driver    (char a_root, tCELL **a_cell);
-char        CELL__free           (tCELL **a_cell);
-char        CELL__free_root      (tCELL **a_cell);
-char        CELL__create         (tCELL **a_cell, int  a_tab, int  a_col, int  a_row);
-char        CELL__delete         (char a_mode, int a_tab, int a_col, int a_row);
-char        CELL_dup             (tCELL **a_cell, tCELL* a_old);
-
-
-
-
-
-char      CELL_change          (tCELL **a_cell, char a_mode, int  a_tab, int  a_col, int  a_row, char *a_source);
-tCELL    *CELL_overwrite       (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
-
-/*> char      CELL__depwipe        (FILE *a_file, char a_type, int *a_seq, int a_level, tCELL *a_curr, long a_stamp);   <*/
-char      CELL_purge           (void);
-
-char      CELL__numerics       (tCELL *a_cell);
-
-/*> char      CELL__rpn            (tCELL *a_cell);                                   <*/
-char      CELL__build          (tCELL *a_cell);
-char      CELL__like           (tCELL *a_cell);
-char      CELL__point          (tCELL *a_cell);
-char      CELL__eval           (tCELL *a_cell);
-char      CELL__formulas       (tCELL *a_cell);
-
-char      CELL__ftype          (char a_prefix);
-char      CELL_init            (void);
-char      CELL_wrap            (void);
-char      CELL__interpret      (tCELL *a_curr);
-
-
-char      CELL_align           (tCELL *a_curr, char a_abbr);
-char      CELL_format          (tCELL *a_curr, char a_abbr);
-char      CELL_decimals        (tCELL *a_curr, char a_abbr);
-char      CELL_units           (tCELL *a_curr, char a_abbr);
-
-char      CELL_erase           (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      CELL_merge_visu      (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-char      CELL_unmerge_visu    (tCELL *a_head, tCELL *a_curr, char a_mode, char a_num);
-/*> char      CELL_visual          (char   a_what, char a_mode, char a_how);          <*/
-
-/*> #define   CHANGE_WIDTH    'w'                                                     <* 
- *> #define   CHANGE_HEIGHT   'h'                                                     <* 
- *> #define   CHANGE_FORMAT   'f'                                                     <* 
- *> #define   CHANGE_UNITS    'K'                                                     <* 
- *> #define   CHANGE_ERASE    'e'                                                     <* 
- *> #define   CHANGE_ALIGN    'a'                                                     <* 
- *> #define   CHANGE_DECIMAL  'd'                                                     <* 
- *> #define   CHANGE_MERGE    'm'                                                     <* 
- *> #define   CHANGE_UNMERGE  'u'                                                     <*/
-
-
-
-char        CELL_dump               (FILE *a_file);
-char        CELL_debug_list         (void);
-char*       CELL__unit_better       (char *a_question, tCELL *a_cell, char *a_label, int a_ref);
-char       *CELL__unit              (char  *a_question, tCELL *a_cell);
-char       *CELL__unitnew           (char  *a_question, char *a_label);
 
 
 
@@ -1751,9 +1671,6 @@ char        TAB_reader              (int c, uchar *a_verb);
 char        TAB_writer              (int c, char  a_tab);
 char        TAB_writer_all          (void);
 
-char        CELL_reader             (int c, uchar *a_verb);
-char        CELL_writer             (uchar *a_verb, tCELL *a_curr);
-char        CELL_writer_all         (void);
 
 
 
@@ -1868,9 +1785,62 @@ char*       api_yvikeys__unit      (char *a_question, int a_num);
 
 
 
+
+/*===[[ gyges_cell.c ]]=======================================================*/
+/*········´ ´··············memory·´ ´·········································*/
+char        CELL__new_driver        (char a_root, tCELL **a_cell, char a_linked);
+char        CELL__new               (tCELL **a_cell, char a_linked);
+char        CELL__new_root          (tCELL **a_cell);
+char        CELL__free_driver       (char a_root, tCELL **a_cell);
+char        CELL__free              (tCELL **a_cell);
+char        CELL__free_root         (tCELL **a_cell);
+/*········´ ´·············program·´ ´·········································*/
+char        CELL_purge              (void);
+char        CELL_init               (void);
+char        CELL_wrap               (void);
+/*········´ ´··············basics·´ ´·········································*/
+char        CELL__wipe              (tCELL *a_curr);
+char        CELL__valid             (tCELL *a_cell, char a_linked);
+/*········´ ´···········existance·´ ´·········································*/
+char        CELL__create            (tCELL **a_cell, int a_tab, int a_col, int a_row);
+char        CELL__delete            (char a_mode, int a_tab, int a_col, int a_row);
+char        CELL_change             (tCELL** a_cell, char a_mode, int a_tab, int a_col, int a_row, char *a_source);
+tCELL*      CELL_overwrite          (char a_mode, int a_tab, int a_col, int a_row, char *a_source, char *a_format);
+char        CELL_dup                (tCELL **a_new, tCELL *a_old);
+char        CELL_erase              (tCELL *a_head, tCELL *a_curr, char a_mode, char a_format);
+/*········´ ´·········formattting·´ ´·········································*/
+char        CELL_align              (tCELL *a_curr, char a_abbr);
+char        CELL_format             (tCELL *a_curr, char a_abbr);
+char        CELL_decimals           (tCELL *a_curr, char a_abbr);
+char        CELL_units              (tCELL *a_curr, char a_abbr);
+char        CELL_fillin             (tCELL *a_curr, char a_abbr);
+char        CELL_zeros              (tCELL *a_curr, char a_abbr);
+char        CELL_sigs               (tCELL *a_curr, char a_abbr);
+/*········´ ´··············yparse·´ ´·········································*/
+char        CELL_reader             (int c, uchar *a_verb);
+char        CELL_writer             (uchar *a_verb, tCELL *a_curr);
+char        CELL_writer_seq         (void *a_owner, void *a_deproot, int a_seq, int a_level);
+char        CELL_writer_all         (void);
+/*········´ ´···········debugging·´ ´·········································*/
+char        CELL_dump               (FILE *f);
+char        CELL_debug_list         (void);
+/*········´ ´··············status·´ ´·········································*/
+char*       CELL_status             (tCELL *a_cell, char a_size, short a_wide, char *r_list);
+char*       CELL_status_by_label    (char a_label [LEN_TERSE], char a_size, short a_wide, char *r_list);
+/*········´ ´············unittest·´ ´·········································*/
+char        CELL_source_line        (tCELL *a_cell, char *a_line);
+char        CELL_result_line        (tCELL *a_cell, char *a_line);
+char        CELL_print_line         (tCELL *a_cell, char *a_line);
+char        CELL_linkage_line       (tCELL *a_cell, char *a_line);
+char*       CELL__unit_better       (char *a_question, tCELL *a_cell, char *a_label, int a_seq);
+char*       CELL__unit              (char *a_question, tCELL *a_cell);
+char*       CELL__unitnew           (char *a_question, char *a_label);
+char        CELL__unitchange        (tCELL *a_cell, char *a_source);
+/*········´ ´················DONE·´ ´·········································*/
+
+
+
 #endif
-
-
-
 /*===============================[[ end code ]]===============================*/
 /* htag :  714,  326 docs (36%),  386 code (72%),  326 othr (21%),  304 slocl */
+/* ·················123456789-123456789-123456789-123456789-················· */

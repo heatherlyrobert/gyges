@@ -1611,7 +1611,7 @@ EXIM__write_one         (FILE *f, char a_style, char a_tab, short a_col, short a
    case 'n' : case 'N' :
       ystrlpad (x_curr->d_label, x_label, '.', '<', 11);
       fprintf (f, "cell··········%-10.10s··"  , x_label);
-      fprintf (f, "%c%c%c%c%c%c%c··"      , x_curr->d_align, x_curr->d_format, x_curr->d_decs, x_curr->d_unit, x_curr->d_fill, x_curr->d_zero);
+      fprintf (f, "%c%c%c%c%c%c%c··"      , x_curr->d_algn, x_curr->d_form, x_curr->d_decs, x_curr->d_unit, x_curr->d_fill, x_curr->d_zero, x_curr->d_sigs);
       fprintf (f, "%s·\n"   , x_source);
       break;
    }
