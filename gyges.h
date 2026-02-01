@@ -77,8 +77,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "4.--, next revision in production"
 #define     P_VERMINOR  "4.0-, clean, simplify, and integrate code"
-#define     P_VERNUM    "4.0d"
-#define     P_VERTXT    "added new formatting handling and successfully unit-tested cell 01-05"
+#define     P_VERNUM    "4.0e"
+#define     P_VERTXT    "cell 06 unit-test successful.  still need to expand formats in mundo"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

@@ -1758,6 +1758,7 @@ CELL_status          (tCELL *a_cell, char a_size, short a_wide, char *r_list)
    char        x_source    [LEN_DESC]  = "";
    char        x_string    [LEN_DESC]  = "";
    char        x_print     [LEN_DESC]  = "";
+   char        x_value     [LEN_DESC]  = "";
    /*---(defense)------------------------*/
    if (a_cell == NULL) {
       if (r_list != NULL)  strcpy (r_list, x_null);
@@ -1784,12 +1785,15 @@ CELL_status          (tCELL *a_cell, char a_size, short a_wide, char *r_list)
       sprintf (x_print , "%3då%-.30s", strlen (a_cell->d_print) , a_cell->d_print);
       if (strlen (a_cell->d_print)  > 30)  ystrlcat (x_print , ">", LEN_DESC); else ystrlcat (x_print , "æ", LEN_DESC);
    }
-   sprintf (x_out, "%c %-8.8s %2d %3d %4d  %c  %c %c %c %c  %c %c %c  %c %3d  %2d x %3d  %-35.35s  %18.6F  %-35.35s  %-35.35s  Ï",
+   if      (a_cell->d_num > (double)  99999999999.999999)  strcpy  (x_value, "***********.******");
+   else if (a_cell->d_num < (double) -99999999999.999999)  strcpy  (x_value, "***********.******");
+   else                                                    sprintf (x_value, "%18.6F", a_cell->d_num);
+   sprintf (x_out, "%c %-8.8s %2d %3d %4d  %c  %c %c %c %c  %c %c %c  %c %3d  %2d x %3d  %-35.35s  %-18.18s  %-35.35s  %-35.35s  Ï",
          a_cell->d_linked, a_cell->d_label , a_cell->d_tab   , a_cell->d_col   , a_cell->d_row    , 
          a_cell->d_type  , a_cell->d_algn , a_cell->d_form, a_cell->d_decs  , a_cell->d_unit   , a_cell->d_fill   , a_cell->d_zero   , a_cell->d_sigs   , a_cell->d_note   , (uchar) a_cell->d_search ,
          (a_cell->d_Rowner != NULL) ? a_cell->d_Rowner->n_size : -1,
          (a_cell->d_Cowner != NULL) ? a_cell->d_Cowner->n_size : -1,
-         x_source, a_cell->d_num, x_string, x_print);
+         x_source, x_value, x_string, x_print);
    /*---(save-back)----------------------*/
    if (r_list != NULL)  ystrlcpy (r_list, x_out, a_wide);
    /*---(complete)-----------------------*/
